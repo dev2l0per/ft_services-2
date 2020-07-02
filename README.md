@@ -35,7 +35,7 @@
 #### Ingress를 사용하면 안된다.
 #### 또한 service에서 type을 NodePort로 하면 안된다. 그럼 도대체 어떻게하냐?ㅋㅋㅋ
 #### 일단 metaLLB 라는걸 사용하면 된다고 한다.
-#### 참고 사이트
+#### 참고 사이트 Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
 - [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
    - 여기에 따르면 service 를 생성할 때, type을 LoadBalancer로 하고 metallb를 설치하면 되는걸로 보인다.
       1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
