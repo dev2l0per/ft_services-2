@@ -7,7 +7,7 @@ metadata:
 spec:
   selector: # Select POD based on the POD's LABELS
     app: ftps # Select ftps POD
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 20
       targetPort: 20 # link to pod's container's port

@@ -20,7 +20,7 @@ minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port
 #fi
 #minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
-minikube addons enable ingress
+minikube addons enable metrics-server
 minikube dashboard &
 eval $(minikube docker-env)
 docker build -t ft_nginx ./srcs/nginx
@@ -32,8 +32,10 @@ docker build -t ft_grafana ./srcs/grafana
 docker build -t ft_influxdb ./srcs/influxdb
 docker build -t ft_telegraf ./srcs/telegraf
 
-# 왜 ingress.yaml은 안되지? 과카몰리에서 해보자
-kubectl create -f ./srcs/yaml/. #왜인지는 모르겠는데 웨일 브라우저만 안된다.
+kubectl create -f ./srcs/yaml/metallb/metallb_control.yaml
+kubectl create -f ./srcs/yaml/metallb/metallb_config.yaml
+kubectl create -f ./srcs/yaml/nginx.yaml
+kubectl create -f ./srcs/yaml/ftps.yaml
 kubectl create -f ./srcs/yaml/grafana
 kubectl create -f ./srcs/yaml/influxdb
 kubectl create -f ./srcs/yaml/mysql
