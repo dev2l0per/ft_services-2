@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: ft_mysql
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3306
+        livenessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          exec:
+            command:
+            - /usr/bin/mysqladmin
+            - ping
+        volumeMounts:
+          - name: mysql-data
+            mountPath: /var/lib/mysql
+          - name: mysql-config
+            mountPath: /etc/mysql/my.cnf
+            subPath: my.cnf
+            readOnly: true
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql
+        - name: mysql-config
+          configMap:
+            name: mysql

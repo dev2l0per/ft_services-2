@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  labels:
+    app: phpmyadmin
+spec:
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: ft_phpmyadmin
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 10
+            httpGet:
+              scheme: HTTP
+              port: 5000
+          volumeMounts:
+            - name: phpmyadmin-config
+              subPath: config.inc.php
+              mountPath: /var/www/localhost/htdocs/config.inc.php
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+      - name: phpmyadmin-config
+        configMap:
+          name: phpmyadmin

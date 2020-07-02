@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec: # Deployment 설정
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec: # 파드 설정
+      containers:
+      - name: wordpress
+        image: ft_wordpress
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 5050
+        livenessProbe: # 컨테이너가 죽었는지 살았는지 확인한다. 만약 설정한 시간내에 답이 없으면 컨테이너가 죽은거므로 다시 살린다. 이 때 모든 데이터가 물론 지워지지만 PVC 해놓은 데이터만큼은 살아있는다.
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 5
+          tcpSocket:
+            port: 5050
+        volumeMounts: # 저장할 공간 지정
+        - name: wordpress-data # name을 지정해줘야 하는 이유는 
+          mountPath: /var/www/html
+        - name: wordpress-config
+          mountPath: /var/www/localhost/htdocs/wp-config.php
+          subPath: wp-config.php
+          readOnly: true
+      volumes:
+      - name: wordpress-config
+        configMap:
+          name: wordpress
+      - name: wordpress-data
+        persistentVolumeClaim:
+          claimName: wordpress
