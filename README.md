@@ -32,6 +32,16 @@
 - [Metrics-server](https://arisu1000.tistory.com/27856?category=787056)
 
 -----
+#### Ingress를 사용하면 안된다.
+#### 또한 service에서 type을 NodePort로 하면 안된다. 그럼 도대체 어떻게하냐?ㅋㅋㅋ
+#### 일단 metaLLB 라는걸 사용하면 된다고 한다.
+#### 참고 사이트
+- [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
+   - 여기에 따르면 service 를 생성할 때, type을 LoadBalancer로 하고 metallb를 설치하면 되는걸로 보인다.
+      - [metalLB configuration](https://metallb.universe.tf/configuration/)
+- [External ip is pending...](https://discuss.kubernetes.io/t/load-balancer-services-always-show-external-ip-pending/10009)
+
+-----
 #### Volume은 왜 필요한가?
 - Kubernetes에서 Deploy를 하면 파드가 생성된다. 그리고 파드는 하나의 서비스를 실행할 수 있다.
 - Deploy된 Pod들은 의도치 않은 이유로 인해 삭제되었을 때 자동으로 복구 되는 힐링기능이 있다.
