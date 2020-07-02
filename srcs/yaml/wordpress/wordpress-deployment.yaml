@@ -5,9 +5,9 @@ metadata:
   labels:
     app: wordpress
 spec: # Deployment 설정
-  selector:
-    matchLabels:
-      app: wordpress
+  selector: # 디플로이먼트가 관리할 파드를 찾는 방법을 정의한다.
+    matchLabels: # 매치되는 라벨을 이용해서 파드를 관리한다.
+      app: wordpress # app: wordpress를 라벨로 갖고있는 파드를 관리한다. spec.template.metadata.labels와 동일해야한다.
   template:
     metadata:
       labels:
@@ -26,11 +26,11 @@ spec: # Deployment 설정
           tcpSocket:
             port: 5050
         volumeMounts: # 저장할 공간 지정
-        - name: wordpress-data # name을 지정해줘야 하는 이유는 
+        - name: wordpress-data # Volume할 위치를 지정
           mountPath: /var/www/html
         - name: wordpress-config
           mountPath: /var/www/localhost/htdocs/wp-config.php
-          subPath: wp-config.php
+          subPath: wp-config.php # subPath를 지정해지 않으면 htdocs 폴더에 위치한 모든 파일이 사라진다.
           readOnly: true
       volumes:
       - name: wordpress-config
