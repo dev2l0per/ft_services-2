@@ -20,9 +20,12 @@
    - [Deployment](https://arisu1000.tistory.com/27833)
    - [공식문서](https://kubernetes.io/ko/docs/concepts/workloads/controllers/deployment/#selector)
 - Service
+   - [공식문서](https://kubernetes.io/ko/docs/concepts/services-networking/service/)
    - [Service1](https://arisu1000.tistory.com/27838?category=787056)
    - [Service2](https://arisu1000.tistory.com/27839?category=787056)
-- [Pod](https://arisu1000.tistory.com/27829?category=787056)
+- Pod
+   - [공식문서](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)
+   - [한글사이트](https://arisu1000.tistory.com/27829?category=787056)
 - [ConfigMap](https://arisu1000.tistory.com/27843?category=787056)
 - [Secret](https://arisu1000.tistory.com/27844)
 - [Volume](https://arisu1000.tistory.com/27849?category=787056)
