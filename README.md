@@ -47,9 +47,8 @@
 - ConfigMap은 보통 외부로 노출되어도 되는 설정일 경우 kind:ConfigMap으로 하고 외부로 노출되면 안되는 경우는 kine:secret 으로 한다.
 - [ConfigMap](https://itnext.io/learn-how-to-configure-your-kubernetes-apps-using-the-configmap-object-d8f30f99abeb)
 - [Secret](https://medium.com/better-programming/how-to-use-kubernetes-secrets-for-storing-sensitive-config-data-f3c5e7d11c15)
-- [Volumes1](https://itnext.io/learn-about-the-basics-of-kubernetes-persistence-part-1-b1fa2847768f)
-- [Volumes2](https://itnext.io/tutorial-basics-of-kubernetes-volumes-part-2-b2ea6f397402)
-- 
+- [Volume]
+   - [한글사이트](https://itnext.io/learn-about-the-basics-of-kubernetes-persistence-part-1-b1fa2847768f)
 
 -----
 #### 컨테이너로 파일 전송하는 법
