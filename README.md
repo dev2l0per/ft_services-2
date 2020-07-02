@@ -38,7 +38,8 @@
 #### 참고 사이트
 - [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
    - 여기에 따르면 service 를 생성할 때, type을 LoadBalancer로 하고 metallb를 설치하면 되는걸로 보인다.
-      - [metalLB configuration](https://metallb.universe.tf/configuration/)
+      1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+      2. [Layer2 Configuration](https://metallb.universe.tf/configuration/)
 - [External ip is pending...](https://discuss.kubernetes.io/t/load-balancer-services-always-show-external-ip-pending/10009)
 
 -----
