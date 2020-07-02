@@ -16,7 +16,9 @@
    ```
 -----
 #### 
-- [Deployment](https://arisu1000.tistory.com/27833)
+- Deployment
+   - [Deployment](https://arisu1000.tistory.com/27833)
+   - [공식문서](https://kubernetes.io/ko/docs/concepts/workloads/controllers/deployment/#selector)
 - Service
    - [Service1](https://arisu1000.tistory.com/27838?category=787056)
    - [Service2](https://arisu1000.tistory.com/27839?category=787056)
