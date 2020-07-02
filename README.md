@@ -142,12 +142,15 @@
 
 - 파일 전송
   ```
-    curl ftp://(minikube ip):21 --ssl -k --user sanam -T filename
+    curl ftp://EXTERNAL-IP:21 --ssl -k --user sanam -T filename
     enter password : 123456789
     // --ssl : ftps 쓰기 위함
     // -k : 인증 문제 무시
   ```
-
+- 파일 다운로드
+   ```
+   curl -u sanam:123456789 'ftp://EXTERNAL-IP:21/toDOWNLOAD' --ssl -k -o ./DOWNLOADED
+   ```
 - 파일 전송 확인
   ```
     kubectl get pods // ftp 파드 이름 확인
