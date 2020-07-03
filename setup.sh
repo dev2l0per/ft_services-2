@@ -21,6 +21,7 @@ minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port
 #minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
 minikube addons enable metrics-server
+#minikube addons enable metallb
 minikube dashboard &
 eval $(minikube docker-env)
 docker build -t ft_nginx ./srcs/nginx
