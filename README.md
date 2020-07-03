@@ -158,12 +158,9 @@
   ```
 
 -----
-#### wordpress, Mysql, Phpmyadmin  
-- Wordpress 클러스터에서 할 때 127.0.0.1:5050하면된다
-1. phpmyadmin 접속해서 wordpress의 wp-users에 user 아무도 없는 것 확인하기.
-2. Wordpress 접속해서 User 만들고 다시 phpmyadmin 확인해서 user 늘어난거 확인하기
-3. Wordpress에서 User add 할 때마다 phpmyadmin user가 
-
+#### wordpress, Mysql, Phpmyadmin
+왜 유저가 아예 없이 시작하냐...
+wp-admin/install 로 Redirection이 안되게 수정해야한다. 하... 처음부터 다시 만들어보자.
 ##### 먼저 Dockerfile을 제대로 Build 하고 yaml 파일 만들기
 - Dockerfile
   - [Wordpress in alpine](https://wiki.alpinelinux.org/wiki/WordPress)
