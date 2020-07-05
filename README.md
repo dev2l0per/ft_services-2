@@ -120,12 +120,6 @@
    - targetPort : 파드와 서비스 객체를 연결
    - 최종적으로 외부의 요청은 컨테이너가 EXPOSE하고 있는 포트와 연결된다.
 -----
-#### ingress
-- 웹 접속
-  ```
-    http://(minikube ip)
-  ```
------
 #### nginx
 ![nginx](images/nginx3.jpg)
 - [Nginx in alpine](https://wiki.alpinelinux.org/wiki/Nginx)
