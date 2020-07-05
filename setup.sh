@@ -9,17 +9,22 @@ printf "%s" "
 ╚═╝        ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
                                                                                   
 "
-export MINIKUBE_HOME=~/goinfre
+#export MINIKUBE_HOME=~/goinfre
 #if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
 #	minikube delete
 #fi
-minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
+#minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
+minikube start --extra-config=apiserver.service-node-port-range=21-32767
 #export MINIKUBE_HOME=~/goinfre
 #if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
 #	minikube delete
 #fi
 #minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
+export MINIKUBE_IP=$(minikube ip)
+echo $MINIKUBE_IP > srcs/wordpress/srcs/ip
+echo $MINIKUBE_IP > srcs/phpmyadmin/srcs/ip
+echo $MINIKUBE_IP > srcs/mysql/srcs/ip
 minikube addons enable metrics-server
 #minikube addons enable metallb
 minikube dashboard &
@@ -39,8 +44,7 @@ kubectl create -f ./srcs/yaml/nginx.yaml
 kubectl create -f ./srcs/yaml/ftps.yaml
 kubectl create -f ./srcs/yaml/grafana
 kubectl create -f ./srcs/yaml/influxdb
-kubectl create -f ./srcs/yaml/mysql
-kubectl create -f ./srcs/yaml/phpmyadmin
+kubectl create -f ./srcs/yaml/mysql.yaml
+kubectl create -f ./srcs/yaml/phpmyadmin.yaml
 kubectl create -f ./srcs/yaml/telegraf
-kubectl create -f ./srcs/yaml/wordpress
-export MINIKUBE_HOME=~/goinfre
+kubectl create -f ./srcs/yaml/wordpress.yaml

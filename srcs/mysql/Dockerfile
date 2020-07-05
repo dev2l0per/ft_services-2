@@ -1,11 +1,19 @@
-FROM alpine:latest
+#STEP 1
+FROM alpine:3.12.0
+RUN apk update && apk upgrade
+COPY srcs/ip /tmp/
 
-RUN apk add mysql mysql-client --no-cache
+#STEP 2
+RUN apk add mysql mysql-client
+COPY srcs/my.cnf /etc/mysql/
+COPY srcs/mysql-init /tmp/
 
-COPY /srcs/wp.sql /
-COPY /srcs/entrypoint.sh /
-COPY /srcs/setup.sh /
-
+#STEP 3
+VOLUME ["/var/lib/mysql"]
 EXPOSE 3306
 
-ENTRYPOINT ["/entrypoint.sh"]
+#STEP 4
+RUN rm -rf /var/cache/apk/*
+RUN mkdir -p /run/mysqld
+COPY srcs/entrypoint.sh /tmp/
+ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
