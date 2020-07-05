@@ -3,7 +3,7 @@
 -----
 #### Todo
 - 서비스 좀비로 만들기
-- wordpress - mysql - phpmyadmin 합치기
+- wordpress - mysql - phpmyadmin
 
 -----
 #### 참고
