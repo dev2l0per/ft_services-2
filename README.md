@@ -1,6 +1,11 @@
 # ft_serivces
 
 -----
+#### Todo
+- 서비스 좀비로 만들기
+- wordpress - mysql - phpmyadmin 합치기
+
+-----
 #### 참고
 [참고](https://itnext.io/kubernetes-in-a-nutshell-blog-series-c3a97fce9445)
 -----
