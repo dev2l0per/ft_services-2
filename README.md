@@ -172,6 +172,7 @@
 
 -----
 #### wordpress, Mysql, Phpmyadmin
+- 왜인지는 모르겠는데 wordpress의 external ip가 minikube ip 언저리에 있어야지만 잘 실행된다.
 ##### - phpmyadmin
    - id : admin
    - password : tkdgur123
