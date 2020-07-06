@@ -39,9 +39,21 @@
 -----
 #### Metallb
 - Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다.- [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
-- 설치 방법
+- 설치
    1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
-   2. [Layer2 Configuration](https://metallb.universe.tf/configuration/)
+   2. [Layer2 Configuration](https://metallb.universe.tf/configuration/) 부분 yaml 파일로 만들어서 사용하기.
+- 테스트
+   ```
+   kubectl get services
+   ```
+   이후 각 서비스의 External-ip로 접속하면 된다.
+- 현재 문제점
+   - wordpress 같은 경우 사용하는 wordpress.sql와 wp-config.php의 host 주소가 minikube ip로 들어가기 때문에 설치 이후 제대로 동작하지 않는다.
+   - 현재는 wordpress_services.yaml 파일에 ***externalIPs*** 옵션을 사용해서 급한 불만 꺼놨다.
+      - 이렇게 하면 kubectl get services 를 했을때 wordpress의 외부 IP가 두개로 나온다...
+   - 어떻게 해결할 것인가?
+      - wordpress.sql과 wp-config.php파일을 configMap형태로 넣어주고 디플로이먼트에서 [command]명령을 이용해서 마지막에 넣어주기..?
+      
 
 #### 참고 사이트 Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
 #### 문제점
