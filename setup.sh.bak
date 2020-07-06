@@ -16,8 +16,8 @@ export MINI=$(minikube ip)
 echo $MINI > srcs/wordpress/srcs/ip
 echo $MINI > srcs/phpmyadmin/srcs/ip
 echo $MINI > srcs/mysql/srcs/ip
-#sed "s/EXTERNAL_IP/$MINI/g" ./srcs/yaml/wordpress/temp/temp > ./srcs/yaml/wordpress/wordpress_service.yaml
-#rm ./srcs/yaml/wordpress/temp
+sed "s/EXTERNAL_IP/$MINI/g" ./srcs/yaml/wordpress/temp/temp > ./srcs/yaml/wordpress/wordpress_service.yaml
+rm ./srcs/yaml/wordpress/temp
 minikube addons enable metrics-server
 minikube dashboard &
 eval $(minikube docker-env)
@@ -40,27 +40,4 @@ kubectl create -f ./srcs/yaml/mysql
 kubectl create -f ./srcs/yaml/phpmyadmin
 kubectl create -f ./srcs/yaml/telegraf
 kubectl create -f ./srcs/yaml/wordpress
-
-cd ./srcs/wordpress/srcs
-kubectl get services | grep wordpress | awk '{print $4}' > WORDPRESS_IP
-kubectl get pods | grep wordpress | awk '{print $1}' > WORDPRESS_POD
-export WORDPRESS_IP=$(cat < WORDPRESS_IP)
-export WORDPRESS_POD=$(cat < WORDPRESS_POD)
-export PENDING=\<pending\>
-until [ $WORDPRESS_IP != $PENDING ]
-do
-	kubectl get services | grep wordpress | awk '{print $4}' > WORDPRESS_IP
-	export WORDPRESS_IP=$(cat < WORDPRESS_IP)
-done
-
-
-sed "s/WORD_IP/$WORDPRESS_IP/g" ./data/wordpress.sql > ./wordpress.sql
-sed "s/WORD_IP/$WORDPRESS_IP/g" ./data/wp-config.php > ./wp-config.php
-kubectl cp wordpress.sql $WORDPRESS_POD:/tmp/
-kubectl cp wp-config.php $WORDPRESS_POD:/etc/wordpress/
-kubectl exec $WORDPRESS_POD -- sh /tmp/init-wordpress.sh
-
-rm WORDPRESS_IP
-rm WORDPRESS_POD
-rm ip
 export MINIKUBE_HOME=~/goinfre
