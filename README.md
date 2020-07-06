@@ -160,11 +160,14 @@
 
 -----
 #### wordpress, Mysql, Phpmyadmin
-###### - phpmyadmin
+##### - phpmyadmin
    - id : admin
    - password : tkdgur123
-###### - wordpress
-- id :
+##### - wordpress
+   - id : admin, user1, user2
+   - password : tkdgur123
+
+-----
 ##### 먼저 Dockerfile을 제대로 Build 하고 yaml 파일 만들기
 - Dockerfile
   - [Wordpress in alpine](https://wiki.alpinelinux.org/wiki/WordPress)
