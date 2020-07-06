@@ -160,8 +160,11 @@
 
 -----
 #### wordpress, Mysql, Phpmyadmin
-왜 유저가 아예 없이 시작하냐...
-wp-admin/install 로 Redirection이 안되게 수정해야한다. 하... 처음부터 다시 만들어보자.
+###### - phpmyadmin
+   - id : admin
+   - password : tkdgur123
+###### - wordpress
+- id :
 ##### 먼저 Dockerfile을 제대로 Build 하고 yaml 파일 만들기
 - Dockerfile
   - [Wordpress in alpine](https://wiki.alpinelinux.org/wiki/WordPress)
