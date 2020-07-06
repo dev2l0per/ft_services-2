@@ -48,18 +48,8 @@
    kubectl get services
    ```
    이후 각 서비스의 External-ip로 접속하면 된다.
-- 현재 문제점
-   - wordpress 같은 경우 사용하는 wordpress.sql와 wp-config.php의 host 주소가 minikube ip로 들어가기 때문에 설치 이후 제대로 동작하지 않는다.
-   - 현재는 wordpress_services.yaml 파일에 ***externalIPs*** 옵션을 사용해서 급한 불만 꺼놨다.
-      - 이렇게 하면 kubectl get services 를 했을때 wordpress의 외부 IP가 두개로 나온다...
-   - 어떻게 해결할 것인가?
-      - wordpress.sql과 wp-config.php파일을 configMap형태로 넣어주고 디플로이먼트에서 [command]명령을 이용해서 마지막에 넣어주기..?
-      
 
-#### 참고 사이트 Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
-#### 문제점
-- Minikube ip 와 External ip의 범위가 다르면 안되는듯?
-- Service.yaml에서 spec.external ip 를 설정하면 되는건가?
+#### Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
 -----
 #### Volume은 왜 필요한가?
 - Kubernetes에서 Deploy를 하면 파드가 생성된다. 그리고 파드는 하나의 서비스를 실행할 수 있다.
@@ -173,12 +163,15 @@
 -----
 #### wordpress, Mysql, Phpmyadmin
 - 왜인지는 모르겠는데 wordpress의 external ip가 minikube ip 언저리에 있어야지만 잘 실행된다.
-##### - phpmyadmin
+##### phpmyadmin
    - id : admin
    - password : tkdgur123
-##### - wordpress
+##### wordpress
    - id : admin, user1, user2
    - password : tkdgur123
+***wordpress같은 경우 설정 파일에 있는 host의 주소가 external ip와 같거나 비슷해야지 wordpress 사이트에 접속이 된다. 따라서 인위적으로 값을 바꿔줘야하는데 두가지 방법있음***
+   1. wordpress_service.yaml에서 externalIPs 옵션을 주는 방법. 이 하지만 이 방법을 쓰면 wordpress가 노출되는 포트가 두개가 되므로 pdf에서 컷 된다. 따라서 아래 방법 사용.
+   2. 일단 wordpress를 실행 시키는데, 이 때 wordpress.sql을 데이터 베이스에 넣지 않는다. 먼저 서비스를 문제 없이 작동시키고 서비스가 돌아가면 생기는 ***external ip***를 가져와서 wordpress.sql 파일과 wp-config.php 파일에 넣어준다. 그리고 kubectl 명령어들을 이용해서 wordpress 컨테이너에 설정 파일들을 다시 넣어주고 데이터베이스에 wordpress.sql 넣어준다.
 
 -----
 ##### 먼저 Dockerfile을 제대로 Build 하고 yaml 파일 만들기
