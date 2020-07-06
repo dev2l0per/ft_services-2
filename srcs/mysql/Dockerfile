@@ -1,7 +1,7 @@
 FROM alpine
 RUN apk update
 RUN apk upgrade
-COPY srcs/ip /tmp/
+#COPY srcs/ip /tmp/
 
 RUN apk add mysql mysql-client
 COPY srcs/my.cnf /etc/mysql/

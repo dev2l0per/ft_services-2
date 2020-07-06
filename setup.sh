@@ -12,12 +12,6 @@ printf "%s" "
 export MINIKUBE_HOME=~/goinfre
 minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
-export MINI=$(minikube ip)
-echo $MINI > srcs/wordpress/srcs/ip
-echo $MINI > srcs/phpmyadmin/srcs/ip
-echo $MINI > srcs/mysql/srcs/ip
-#sed "s/EXTERNAL_IP/$MINI/g" ./srcs/yaml/wordpress/temp/temp > ./srcs/yaml/wordpress/wordpress_service.yaml
-#rm ./srcs/yaml/wordpress/temp
 minikube addons enable metrics-server
 minikube dashboard &
 eval $(minikube docker-env)
@@ -62,5 +56,4 @@ kubectl exec $WORDPRESS_POD -- sh /tmp/init-wordpress.sh
 
 rm WORDPRESS_IP
 rm WORDPRESS_POD
-rm ip
 export MINIKUBE_HOME=~/goinfre
