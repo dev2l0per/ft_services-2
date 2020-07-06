@@ -10,16 +10,7 @@ printf "%s" "
                                                                                   
 "
 export MINIKUBE_HOME=~/goinfre
-#if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
-#	minikube delete
-#fi
 minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
-#minikube start --extra-config=apiserver.service-node-port-range=21-32767
-#export MINIKUBE_HOME=~/goinfre
-#if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
-#	minikube delete
-#fi
-#minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
 export MINI=$(minikube ip)
 echo $MINI > srcs/wordpress/srcs/ip

@@ -26,10 +26,10 @@ define( 'DB_NAME', 'wordpress' );
 define( 'DB_USER', 'admin' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', 'admin' );
+define( 'DB_PASSWORD', 'tkdgur123' );
 
 /** MySQL hostname */
-define( 'DB_HOST', 'mysql-service' );
+define( 'DB_HOST', 'mysql' );
 define( 'WP_HOME', 'http://WORD_IP:5050' );
 define( 'WP_SITEURL', 'http://WORD_IP:5050' );
 
