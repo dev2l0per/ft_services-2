@@ -9,24 +9,25 @@ printf "%s" "
 ╚═╝        ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
                                                                                   
 "
-#export MINIKUBE_HOME=~/goinfre
+export MINIKUBE_HOME=~/goinfre
 #if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
 #	minikube delete
 #fi
-#minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
-minikube start --extra-config=apiserver.service-node-port-range=21-32767
+minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
+#minikube start --extra-config=apiserver.service-node-port-range=21-32767
 #export MINIKUBE_HOME=~/goinfre
 #if [ -d "$MINIKUBE_HOME/.minikube/machines/minikube" ]; then
 #	minikube delete
 #fi
 #minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
-export MINIKUBE_IP=$(minikube ip)
-echo $MINIKUBE_IP > srcs/wordpress/srcs/ip
-echo $MINIKUBE_IP > srcs/phpmyadmin/srcs/ip
-echo $MINIKUBE_IP > srcs/mysql/srcs/ip
+export MINI=$(minikube ip)
+echo $MINI > srcs/wordpress/srcs/ip
+echo $MINI > srcs/phpmyadmin/srcs/ip
+echo $MINI > srcs/mysql/srcs/ip
+sed "s/EXTERNAL_IP/$MINI/g" ./srcs/yaml/wordpress/temp/temp > ./srcs/yaml/wordpress/wordpress_service.yaml
+rm ./srcs/yaml/wordpress/temp
 minikube addons enable metrics-server
-#minikube addons enable metallb
 minikube dashboard &
 eval $(minikube docker-env)
 docker build -t ft_nginx ./srcs/nginx
@@ -44,7 +45,8 @@ kubectl create -f ./srcs/yaml/nginx.yaml
 kubectl create -f ./srcs/yaml/ftps.yaml
 kubectl create -f ./srcs/yaml/grafana
 kubectl create -f ./srcs/yaml/influxdb
-kubectl create -f ./srcs/yaml/mysql.yaml
-kubectl create -f ./srcs/yaml/phpmyadmin.yaml
+kubectl create -f ./srcs/yaml/mysql
+kubectl create -f ./srcs/yaml/phpmyadmin
 kubectl create -f ./srcs/yaml/telegraf
-kubectl create -f ./srcs/yaml/wordpress.yaml
+kubectl create -f ./srcs/yaml/wordpress
+export MINIKUBE_HOME=~/goinfre
