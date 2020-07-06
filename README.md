@@ -38,7 +38,8 @@
 
 -----
 #### Metallb
-- Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다.- [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
+- Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다.
+- [참고사이트](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
 - 설치
    1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
    2. [Layer2 Configuration](https://metallb.universe.tf/configuration/) 부분 yaml 파일로 만들어서 사용하기.
