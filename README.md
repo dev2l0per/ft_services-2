@@ -37,14 +37,13 @@
 - [Metrics-server](https://arisu1000.tistory.com/27856?category=787056)
 
 -----
-#### Ingress를 사용하면 안된다. 대신 metallb를 사용할 수 있다.
-#### 사용방법은 굉장히 간단하다. Service 객체의 Type이 NodePort라면 LoadBalancer로 바꿔주자.
-#### 그리고 아래 사이트 참고해서 두 개의 yaml을 만들고 설치하면 된다. 참고로 주소 형태로 되어있는 녀석을 먼저해줘야한다.
+#### Metallb
+- Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다.- [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
+- 설치 방법
+   1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+   2. [Layer2 Configuration](https://metallb.universe.tf/configuration/)
+
 #### 참고 사이트 Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
-- [metallb && minikube](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
-   - 여기에 따르면 service 를 생성할 때, type을 LoadBalancer로 하고 metallb를 설치하면 되는걸로 보인다.
-      1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
-      2. [Layer2 Configuration](https://metallb.universe.tf/configuration/)
 #### 문제점
 - Minikube ip 와 External ip의 범위가 다르면 안되는듯?
 - Service.yaml에서 spec.external ip 를 설정하면 되는건가?
