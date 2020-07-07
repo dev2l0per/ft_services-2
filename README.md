@@ -172,9 +172,12 @@
 ***wordpress같은 경우 설정 파일에 있는 host의 주소가 external ip와 같거나 비슷해야지 wordpress 사이트에 접속이 된다. 따라서 인위적으로 값을 바꿔줘야하는데 두가지 방법있음***
    1. wordpress_service.yaml에서 externalIPs 옵션을 주는 방법. 이 하지만 이 방법을 쓰면 wordpress가 노출되는 포트가 두개가 되므로 pdf에서 컷 된다. 따라서 아래 방법 사용.
    2. 일단 wordpress를 실행 시키는데, 이 때 wordpress.sql을 데이터 베이스에 넣지 않는다. 먼저 서비스를 문제 없이 작동시키고 서비스가 돌아가면 생기는 ***external ip***를 가져와서 wordpress.sql 파일과 wp-config.php 파일에 넣어준다. 그리고 kubectl 명령어들을 이용해서 wordpress 컨테이너에 설정 파일들을 다시 넣어주고 데이터베이스에 wordpress.sql 넣어준다.
+      - 이 방법말고 configMap 파일 형태를 이용해서 하는게 더 간편할거 같다!!
+         - 먼저 wordpress.sql 데이터를 넣지 않은 상태로 시작한다.
+         - 그리고 external ip가 나오면 그 값을 wordpress_sql.yaml의 host 부분에 넣어준다. 
+         - 이 후 kubectl apply -f wordpress_sql.yaml로 적용해주고 kubectl exec 를 통해서 wordpress.sql을 데이터베이스에 넣어준다.(흠... 안되려나?)
+      - wordpress에 데이터를 넣어줄 때 한번에 들어가는 경우는 거의 없다. 쉘 스크립트 등을 통해서 데이터가 잘 들어갈 때 까지 무한 반복 시켜주자.(until 명령어 사용하면 편함)
 
------
-##### 먼저 Dockerfile을 제대로 Build 하고 yaml 파일 만들기
 - Dockerfile
   - [Wordpress in alpine](https://wiki.alpinelinux.org/wiki/WordPress)
   - [Mysql in alpine](https://wiki.alpinelinux.org/wiki/MariaDB)
