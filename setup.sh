@@ -11,13 +11,15 @@ printf "%s" "
 "
 
 export MINIKUBE_HOME=~/goinfre
-minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
+
+echo "Minikube start ..."
+minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767 > /dev/null
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
 minikube addons enable metrics-server
 minikube dashboard &
 eval $(minikube docker-env)
 
-echo "Making images...."
+echo "이미지 빌드를 시작합니다."
 docker build -t ft_nginx ./srcs/nginx > /dev/null
 docker build -t ft_ftps ./srcs/ftps > /dev/null
 docker build -t ft_wordpress ./srcs/wordpress > /dev/null
@@ -27,7 +29,7 @@ docker build -t ft_grafana ./srcs/grafana > /dev/null
 docker build -t ft_influxdb ./srcs/influxdb > /dev/null
 docker build -t ft_telegraf ./srcs/telegraf > /dev/null
 
-echo "Applying yaml...."
+echo "디플로이먼트와 서비스 객체를 생성합니다."
 kubectl create -f ./srcs/yaml/metallb/metallb_control.yaml > /dev/null
 kubectl create -f ./srcs/yaml/metallb/metallb_config.yaml > /dev/null
 kubectl create -f ./srcs/yaml/nginx.yaml > /dev/null
@@ -39,10 +41,10 @@ kubectl create -f ./srcs/yaml/phpmyadmin > /dev/null
 kubectl create -f ./srcs/yaml/telegraf > /dev/null
 kubectl create -f ./srcs/yaml/wordpress > /dev/null
 
-echo "Setup wordpress...."
+echo "워드프레스를 세팅합니다."
 sh wordpress_setup.sh > /dev/null
 
-echo "FIN!"
+echo "설치가 완료되었습니다!"
 
 #cd ./srcs/wordpress/srcs
 #kubectl get services | grep wordpress | awk '{print $4}' > WORDPRESS_IP
