@@ -9,33 +9,40 @@ printf "%s" "
 ╚═╝        ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝╚══════╝
                                                                                   
 "
+
 export MINIKUBE_HOME=~/goinfre
 minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
 minikube addons enable metrics-server
 minikube dashboard &
 eval $(minikube docker-env)
-docker build -t ft_nginx ./srcs/nginx
-docker build -t ft_ftps ./srcs/ftps
-docker build -t ft_wordpress ./srcs/wordpress
-docker build -t ft_mysql ./srcs/mysql
-docker build -t ft_phpmyadmin ./srcs/phpmyadmin
-docker build -t ft_grafana ./srcs/grafana
-docker build -t ft_influxdb ./srcs/influxdb
-docker build -t ft_telegraf ./srcs/telegraf
 
-kubectl create -f ./srcs/yaml/metallb/metallb_control.yaml
-kubectl create -f ./srcs/yaml/metallb/metallb_config.yaml
-kubectl create -f ./srcs/yaml/nginx.yaml
-kubectl create -f ./srcs/yaml/ftps.yaml
-kubectl create -f ./srcs/yaml/grafana
-kubectl create -f ./srcs/yaml/influxdb
-kubectl create -f ./srcs/yaml/mysql
-kubectl create -f ./srcs/yaml/phpmyadmin
-kubectl create -f ./srcs/yaml/telegraf
-kubectl create -f ./srcs/yaml/wordpress
+echo "Making images...."
+docker build -t ft_nginx ./srcs/nginx > /dev/null
+docker build -t ft_ftps ./srcs/ftps > /dev/null
+docker build -t ft_wordpress ./srcs/wordpress > /dev/null
+docker build -t ft_mysql ./srcs/mysql > /dev/null
+docker build -t ft_phpmyadmin ./srcs/phpmyadmin > /dev/null
+docker build -t ft_grafana ./srcs/grafana > /dev/null
+docker build -t ft_influxdb ./srcs/influxdb > /dev/null
+docker build -t ft_telegraf ./srcs/telegraf > /dev/null
 
-sh wordpress_setup.sh
+echo "Applying yaml...."
+kubectl create -f ./srcs/yaml/metallb/metallb_control.yaml > /dev/null
+kubectl create -f ./srcs/yaml/metallb/metallb_config.yaml > /dev/null
+kubectl create -f ./srcs/yaml/nginx.yaml > /dev/null
+kubectl create -f ./srcs/yaml/ftps.yaml > /dev/null
+kubectl create -f ./srcs/yaml/grafana > /dev/null
+kubectl create -f ./srcs/yaml/influxdb > /dev/null
+kubectl create -f ./srcs/yaml/mysql > /dev/null
+kubectl create -f ./srcs/yaml/phpmyadmin > /dev/null
+kubectl create -f ./srcs/yaml/telegraf > /dev/null
+kubectl create -f ./srcs/yaml/wordpress > /dev/null
+
+echo "Setup wordpress...."
+sh wordpress_setup.sh > /dev/null
+
+echo "FIN!"
 
 #cd ./srcs/wordpress/srcs
 #kubectl get services | grep wordpress | awk '{print $4}' > WORDPRESS_IP
