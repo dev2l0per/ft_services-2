@@ -11,4 +11,4 @@ datasources:
   editable: false
   basicAuth: true
   basicAuthUser: admin
-  basicAuthPassword: password
+  basicAuthPassword: tkdgur123
