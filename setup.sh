@@ -15,8 +15,12 @@ export MINIKUBE_HOME=~/goinfre
 echo "Minikube start ..."
 minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767 > /dev/null
 #minikube start --extra-config=apiserver.service-node-port-range=21-32767
-minikube addons enable metrics-server
+
+echo "대쉬보드를 실행합니다."
 minikube dashboard &
+
+echo "metrics-server를 enable합니다."
+minikube addons enable metrics-server > /dev/null
 eval $(minikube docker-env)
 
 echo "이미지 빌드를 시작합니다."
@@ -42,7 +46,7 @@ kubectl create -f ./srcs/yaml/telegraf > /dev/null
 kubectl create -f ./srcs/yaml/wordpress > /dev/null
 
 echo "워드프레스를 세팅합니다."
-sh wordpress_setup.sh > /dev/null
+sh wordpress_setup.sh
 
 echo "설치가 완료되었습니다!"
 
