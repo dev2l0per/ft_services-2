@@ -5,7 +5,7 @@ metadata:
   labels:
     app: telegraf
 data:
-  telegraf.conf: |+
+  telegraf.conf: |
     [global_tags]
 
     [agent]
