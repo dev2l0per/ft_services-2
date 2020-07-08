@@ -275,11 +275,32 @@
    - 그라파나의 external ip를 통해 웹에 접속하자.
    - 이후 create dashboard를 누르자. 이후 Add new panel를 누른다.
    - 현재 데이터베이스를 디폴트로 사용하고 있다. 이 디폴트를 influxdb로 바꿔주자.
-   - 그러면 A 라는 이름으로 from, select 등을 설정하는 표가 아래로 뜨는데 이건 무시하고 옆에 작게있는 연필을 누르자.
-   - 연필을 누르면
-   - 위의 작업을 했다면 influxdb 컨테이너에 접속하자.
+   - 그러면 A 라는 이름의 표가 있다.
+   - 위의 작업을 했다면 influxdb 컨테이너에 접속하자. 아래는 mysql의 traffic 사용량을 그래프화 시키는 작업.[여기 참고](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-schema/)
       ```
-      influx // 인플럭스 db 시작
+      // 인플럭스 db 시작
+      influx
+      // telegraf는 데이터 베이스의 이름
       use telegref
+      // measurements는 데이터베이스의 단위. docker, docker_container_cpu ... 등의 목록이 나온다.
+      // 이중에서 트래픽 관련된 데이터는 docker_container_net에 있다.
+      show measurements 
+      // tag 확인하기. 우리가 시각화해야할 mysql과 같은 컨테이너들은 app으로 되어 있다.
+      show tag keys 
+      // name: docker_container_net을 확인해보면 트래픽 관련한 데이터가 나온다. bytes를 사용하기로하자.
+      // rx_bytes : total number of received data, tx_bytes : total number of transmitted
+      show fields keys 
+      // 이렇게 하면 무진장 많이 뜬다. app으로 mysql 지정해주자.
+      select tx_bytes from docker_container_net 
+      // 이렇게해도 무진장 많이 뜬다. 지금까지 저장한 데이터가 모두 뜨기 때문. 따라서 마지막만 가져오자. 마지막만 가져오고 몇 초 간격을 지정해주면 잘 나온다.
+      select tx_bytes from docker_container_net where "app" = 'mysql' 
+      // 아래의 명령문을 적어놓고 웹으로 이동하자.
+      select last("tx_bytes") from docker_container_net where "app" = 'mysql' 
       ```
+  - 아까의 표 A를 표면 from, select, group by ... 등이 보인다. from의 select measurement에서 docker_container_net을 선택
+  - where에서 app, mysql을 선택
+  - select 에서 tx_bytes 선택 이후 옆에 있는 mean()을 remove하고 + 누른다음에 selectors -> last 를 선택
+  - group by 에서는 시간 간격을 선택. 그냥 둬도 무방
+  - 그럼 이제 판넬이 뜬다. 이후에 옆에 있는 옵션으로 꾸미자.
+  - 적당히 꾸몄다 싶으면 다 저장한다. 이후에 json 형태로 export 한 다음에 dashboards.yaml에서 말해주는 dashboards 폴더에 json 파일을 넣자. 그럼 끝!
       
