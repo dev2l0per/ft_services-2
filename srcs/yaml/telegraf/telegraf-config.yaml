@@ -26,6 +26,10 @@ data:
     ###############################################################################
     #                            OUTPUT PLUGINS                                   #
     ###############################################################################
+    # telegraf는 데이터를 수집하는 프로그램이다. 데이터를 수집하면 저장은? 저장은
+    # influxdb를 통해서 한다 어떻게? 포트를 통해서 influxdb가 자신의 존재를 과시하고 있다!
+    # 그리고 이 부분은 계정 관련 부분이라 보안이 문제가 된다.
+    # 따라서 보안이 필요한 부분을 전역변수로 선언하고 secret.yaml을 이용해주자.
 
     [[outputs.influxdb]]
       ## Multiple URLs can be specified for a single cluster, only ONE of the
@@ -38,12 +42,19 @@ data:
       ## Telegraf with a user without permissions to create databases or when the
       ## database already exists.
       # skip_database_creation = false
+      # influxdb_secret.yaml와 같게 해주자.
       username = "$INFLUXDB_USER"
       password = "$INFLUXDB_USER_PASSWORD"
 
     ###############################################################################
     #                            INPUT PLUGINS                                    #
     ###############################################################################
+    # 위에서 output은 telegraf가 수집한 데이터를 보내는 설정이었다면
+    # 이 input은 데이터를 어디서 수집할지에 대한 문제다.
+    # 기본 설정파일을 보면 aws, azureㄷ 등 수많은 방법을 통해서 데이터를 가져올 수 있다.
+    # 우리는 쿠버네티스를 이용하고 각 파드(컨테이너)에서 뿜어져 나오는 데이터를 사용하므로
+    # 도커 관련 설정을 보면 된다.
+    # 그리고 그냥 기본 디폴트로 사용하면 된다. 주석처리 되어있는거 해제만 해주면 됨.
 
     # Read metrics about docker containers
     [[inputs.docker]]
