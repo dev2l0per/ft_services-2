@@ -231,5 +231,43 @@
    주석을 풀어주기만 하면 끝!
    ```
    
-      
-      
+***3. GRAFANA***
+- 데이터를 수집하고 저장까지 했으므로 이제 GRAFANA를 이용해서 시각화를 하자.
+- 설정파일을 만지기 전에 필요한 세팅을 하자
+- 먼저 그라파나를 어떻게 사용하는지 조금 알아보자
+   - docker run -it -p 30000:3000 alpine /bin/sh -> 컨테이너 접속
+   - apk add grafana --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --no-cache -> 그라파나 인스톨
+   - /usr/sbin/grafana-server --homepath=/usr/share/grafana -> 그라파나 실행
+   - localhost:30000 접속 (클러스터라면 127.0.0.1:30000)
+   - 처음 로그인 id, password는 amdin이다. 이후 비밀번호 새롭게 세팅 후 접속
+   - 왼쪽 목록에서 Crate dashboard를 누르자
+   - 대쉬보드를 만들기 위해서는 DB가 필요하다. db를 만들러가자. 왼쪽 톱니바퀴 모양의 configuration의 datasource를 누르자.
+   - 여기서 사용할 db를 선택하고 데이터를 가지고 대쉬보드를 만들 수 있다.
+- 그럼 이제 설정 파일을 보자. 일단 /usr/share/grafana에 들어가보자.
+   ```
+   /usr/share/grafana/conf # tree
+   .
+   ├── defaults.ini
+   ├── ldap.toml
+   ├── ldap_multiple.toml
+   ├── provisioning
+   │   ├── dashboards
+   │   │   └── sample.yaml
+   │   ├── datasources
+   │   │   └── sample.yaml
+   │   └── notifiers
+   │       └── sample.yaml
+   └── sample.ini
+   ```
+   - 여기서 주목할건 ***sample.ini 파일과 provisioning 폴더***
+- sample.ini
+   - 이 파일은 샘플파일에서 필요한 부분들을 주석해제 해주면 된다. 대부분 값들을 그대로 주석만 풀고 사용하면 된다.
+- ***PROVISIONING***
+   - 이 폴더가 정말로 중요하다. 아까전에 그라파나를 실행했을 때 대쉬보드는 만들어져 있지 않고 DB 또한 열결되어 있지 않았다.
+   - 그렇다면 ft_services를 실행할 때마다 이런 값들을 다 설정해줘야하는건가?
+   - 아니다! 이 동작들을 자동화 시킬 수 있다!!!
+   - 자동화 시키는게 바로 ***datasource와 dashboards 폴더 안에 있는 yaml 파일이다. [이 사이트의 마지막 부분 코드블럭을 참고하자](https://grafana.com/docs/grafana/latest/features/datasources/influxdb/)
+      - datasource.yaml 이 파일은 DB 연동을 자동화 시킨다.
+      - dashboards.yaml 이 파일은 만들어져 있는 대쉬보드가 어디에 있는지를 가르쳐주는 역할을 한다.
+      - grafana는 이제 시작할 때 datasource.yaml 을 보고 DB를 연동시킨 다음에 dashboards.yaml이 가르쳐주는 위치로 가서 만들어져 있는 dashboards를 찾고 시각화시킨다.
+- 대쉬보드 만들
