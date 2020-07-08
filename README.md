@@ -196,3 +196,22 @@
 - grafana는 데이터를 시각화한다.
 > telegraf로 수집한 데이터를 influxdb로 넘기고 grafana로 시각화하자!
 >> influxdb, telegraf, grafana 순서로 세팅하자!
+
+***1. INFLUXDB***
+- influxdb는 시계열 데이터를 저장하는 DB다. 주로 Grafana 같은 대쉬보드 툴과 연계하여 모니터링 용도로 사용된다.
+- 그렇다면 왜 Influxdb를 사용하는가?
+   - 시계열 데이터를 저장하고 조회, 효율성등이 아주 좋다.
+   - 시계열DB 트렌드 자료를 보면 influxdb의 점유율은 압도적이고 그 증가율 또한 엄청나다.
+- 사용법
+   ```
+   IN ALPINE
+   
+   1. influxdb 설치
+      - apk add influxdb
+   2. influxdb.conf 파일 수정
+      - vim /etc/influxdb.conf
+      - 보면 옵션에 대한 설명이 주석으로 달려있다. 설명을 읽어보고 맨 마지막 줄에 있는 옵션을 사용하면 된다.
+      - 설정은 그냥 디폴트로 다 사용하면 될거 같다. 하지만 클러스터 환경에 제약이 있기 때문에 [ data ] 부분에 있는 메모리 관련해서는 디폴트보다 작게 할 필요가 있는거같다.
+      - [ http ] 부분을 보면 ssl 관련 설정이 있는데 만약 채점 기준에 nginx 를 제외한 다른 서비스들도 ssl을 사용해야 한다고 하면 여기를 수정하면 될 듯.
+      - [[graphite]] 부분을 보면 templates 설정이 있는데 이 부분 그래픽화를 어떻게 할지 결졍하는듯. 여기를 참고https://gatling.io/docs/current/realtime_monitoring
+      
