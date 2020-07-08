@@ -219,10 +219,10 @@
 
 - telegraf는 data collector이다.
 - 그렇가면 도대체 어디서 데이터를 수집하지?
-   - ***DOCKER***
+   - ***DOCKER*** -> input
 - 데이터를 수집하는걸로 끝인가? 노노 수집한 데이터를 저장해야 한다. 어디에?
-   - ***INFLUXDB***
-- 따라서 ***INPUT과 OUTPUT***을 설정해줘야 한다!!!!
+   - ***INFLUXDB*** -> output
+- 따라서 ***INPUT과 OUTPUT***을 설정하자!!!!
 - 설정 방법
    ```
    - output plugin : 우리는 데이터를 저장할 보관소로 influxdb를 선정했으므로 db의 아이디와 비밀번호 그리고 url등을 입력해주면 된다.
@@ -265,9 +265,21 @@
 - ***PROVISIONING***
    - 이 폴더가 정말로 중요하다. 아까전에 그라파나를 실행했을 때 대쉬보드는 만들어져 있지 않고 DB 또한 열결되어 있지 않았다.
    - 그렇다면 ft_services를 실행할 때마다 이런 값들을 다 설정해줘야하는건가?
-   - 아니다! 이 동작들을 자동화 시킬 수 있다!!!
-   - 자동화 시키는게 바로 ***datasource와 dashboards 폴더 안에 있는 yaml 파일이다. [이 사이트의 마지막 부분 코드블럭을 참고하자](https://grafana.com/docs/grafana/latest/features/datasources/influxdb/)
+   - ***NO!!*** 이 동작들을 자동화 시킬 수 있다!!!
+   - 자동화 시키는게 바로 ***datasource와 dashboards 폴더 안에 있는 yaml 파일이다. [이 사이트의 마지막 부분 코드블럭을 참고하자](https://grafana.com/docs/grafana/latest/features/datasources/influxdb/)***
       - datasource.yaml 이 파일은 DB 연동을 자동화 시킨다.
       - dashboards.yaml 이 파일은 만들어져 있는 대쉬보드가 어디에 있는지를 가르쳐주는 역할을 한다.
-      - grafana는 이제 시작할 때 datasource.yaml 을 보고 DB를 연동시킨 다음에 dashboards.yaml이 가르쳐주는 위치로 가서 만들어져 있는 dashboards를 찾고 시각화시킨다.
-- 대쉬보드 만들
+      - grafana는 이제 시작할 때 datasource.yaml 을 보고 DB를 연동시킨 다음에 dashboards.yaml이 가르쳐주는 위치로 가서 json 형태로 만들어져 있는 dashboards를 찾고 시각화시킨다.
+- 대쉬보드 만들기
+   - 일단 대쉬보드를 만들기 전에 쿠버네티스를 실행하고 대쉬보드를 만들기 원하는 모든 컨테이너를 실행시키자.
+   - 그라파나의 external ip를 통해 웹에 접속하자.
+   - 이후 create dashboard를 누르자. 이후 Add new panel를 누른다.
+   - 현재 데이터베이스를 디폴트로 사용하고 있다. 이 디폴트를 influxdb로 바꿔주자.
+   - 그러면 A 라는 이름으로 from, select 등을 설정하는 표가 아래로 뜨는데 이건 무시하고 옆에 작게있는 연필을 누르자.
+   - 연필을 누르면
+   - 위의 작업을 했다면 influxdb 컨테이너에 접속하자.
+      ```
+      influx // 인플럭스 db 시작
+      use telegref
+      ```
+      
