@@ -214,4 +214,11 @@
       - 설정은 그냥 디폴트로 다 사용하면 될거 같다. 하지만 클러스터 환경에 제약이 있기 때문에 [ data ] 부분에 있는 메모리 관련해서는 디폴트보다 작게 할 필요가 있는거같다.
       - [ http ] 부분을 보면 ssl 관련 설정이 있는데 만약 채점 기준에 nginx 를 제외한 다른 서비스들도 ssl을 사용해야 한다고 하면 여기를 수정하면 될 듯.
       - [[graphite]] 부분을 보면 templates 설정이 있는데 이 부분 그래픽화를 어떻게 할지 결졍하는듯. 여기를 참고https://gatling.io/docs/current/realtime_monitoring
+   ```
+***2. TELEGRAF***
+
+- telegraf는 data collector이다.
+
+- 그렇가면 도대체 어디서 데이터를 수집하지?
+      
       
