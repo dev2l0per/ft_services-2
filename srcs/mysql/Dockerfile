@@ -7,6 +7,7 @@ RUN apk add mysql mysql-client
 COPY srcs/my.cnf /etc/mysql/
 COPY srcs/mysql-init /tmp/
 
+# PV에 volume
 VOLUME ["/var/lib/mysql"]
 EXPOSE 3306
 
