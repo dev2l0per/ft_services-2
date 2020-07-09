@@ -162,7 +162,34 @@
 
 -----
 #### wordpress, Mysql, Phpmyadmin
-- 왜인지는 모르겠는데 wordpress의 external ip가 minikube ip 언저리에 있어야지만 잘 실행된다.
+- 여기서 목표는 wordpress의 데이터가 담겨있는 mysql 을 구동하고 wordpress와 phpmyadmin을 연결시키는 것.
+- 따라서 먼저 mysql을 설치하고 phpmyadmin을 mysql 서버에 연동시킨 다음에 wordpress을 실행하자.
+- ***wordpress의 데이터는 마지막에 넣어주자. 왜냐하면 넣어주는 데이터인 wordpress.sql에는 wordpress의 url, 호스트의 주소.. 이 Service 객체에 주어지는 external ip와 같아야한다. 따라서 wordpress.sql을 서비스가 된 후에 ip 정보를 수정해서 mysql에 넣어주는 방식으로 하자.***
+##### mysql
+- mysqld -> mysql server
+- 처음 설치하면 mysql server을 실행할 준비가 되어있지 않다. 따라서 이 작업을 해야한다. 아래 명령어를 입력하면 됨.
+- 여기서 root는 시스템 user다. 다른 user를 직접 만들고 해도 되는데 그때는 비밀번호 입력이 필요하다. 따라서 간편한 root를 쓰자
+- [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html) 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
+- mysql 서버를 만들었으니깐 이제 데이터를 넣어야 한다.
+- 데이터가 들어갈 DB를 만들어주자. DB의 이름은 wordpress로 한다.
+- 그리고 이 wordpress에 접근할 권리가 있는 사용자를 추가하자. 이 값들은 나중에 phpmyadmin에서 사용하므로 잘 기억하자. (id : admin, password : tkdgur123)
+- 여기서 중요한게 db 생성 앞 뒤로 **flush privileges**를 해줘야 한다. 이 명령은 mysql server에게 지금 만든 테이블을 reload하라고 알려주는 역할을 한다. 왜인지는 모르겠지만 앞 뒤 모두 해줘야 정상적으로 작동한다.
+   ```
+   mysqld_install_db --user=root // mysql server 생성
+   mysqld --user=root --bootstrap < init_mysql // bootstrap 옵션을 사용하면 서버를 본격적으로 실행하지 않는다. 따라서 db 를 넣어줄 때 이 옵션을 넣어주자. 솔직히 잘 모른다.
+   mysqld --user=root // 서버 실행 
+   ```
+   - init_mysql
+      ```
+      FLUSH PRIVILEGES;
+      CREATE DATABASE wordpress;
+      GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' IDENTIFIED BY 'tkdgur123' WITH GRANT OPTION;
+      FLUSH PRIVILEGES;
+      ```
+- 다음 단계는 database를 만드는 단계다. database 이름은 wordpress로 하고 
+
+##### MYSQL
+- 여기서 목표는 mysql 데이터 베이스를 가동하고 
 ##### phpmyadmin
    - id : admin
    - password : tkdgur123
