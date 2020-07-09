@@ -24,9 +24,9 @@
 			<div id="divPosition">
 				<h1>FT_SERVICES!</h1>
 					<p>ClICK SERIVICES!!</p>
-					<a href="http://192.168.99.203:5050">WORDPRESS</a>
-					<a href="http://192.168.99.202:5000">PHPMYADMIN</a>
-					<a href="http://192.168.99.200:3000">GRAFANA</a>
+					<a href="http://WORDPRESS_IP:5050">WORDPRESS</a>
+					<a href="http://PHPMYADMIN_IP:5000">PHPMYADMIN</a>
+					<a href="http://GRAFANA_IP:3000">GRAFANA</a>
 					<a href="http://www.naver.com">NAVER</a>
 					<br/>
 			</div>
