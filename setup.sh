@@ -24,12 +24,19 @@ minikube addons enable metrics-server > /dev/null
 eval $(minikube docker-env)
 
 echo "이미지 빌드를 시작합니다."
+echo "ftps..."
 docker build -t ft_ftps ./srcs/ftps > /dev/null
+echo "wordpress..."
 docker build -t ft_wordpress ./srcs/wordpress > /dev/null
+echo "mysql..."
 docker build -t ft_mysql ./srcs/mysql > /dev/null
+echo "phpmyadmin..."
 docker build -t ft_phpmyadmin ./srcs/phpmyadmin > /dev/null
+echo "grafana..."
 docker build -t ft_grafana ./srcs/grafana > /dev/null
+echo "influxdb..."
 docker build -t ft_influxdb ./srcs/influxdb > /dev/null
+echo "telegraf..."
 docker build -t ft_telegraf ./srcs/telegraf > /dev/null
 
 echo "디플로이먼트와 서비스 객체를 생성합니다."
@@ -48,8 +55,6 @@ sh wordpress_setup.sh
 
 echo "Nginx를 세팅합니다."
 sh nginx_setup.sh
-#docker build -t ft_nginx ./srcs/nginx > /dev/null
-#kubectl create -f ./srcs/yaml/nginx.yaml > /dev/null
 
 echo "설치가 완료되었습니다!"
 
