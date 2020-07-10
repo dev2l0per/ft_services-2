@@ -10,11 +10,11 @@ printf "%s" "
                                                                                   
 "
 
-export MINIKUBE_HOME=~/goinfre
+#export MINIKUBE_HOME=~/goinfre
 
 echo "Minikube start ..."
-minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767 > /dev/null
-#minikube start --extra-config=apiserver.service-node-port-range=21-32767
+#minikube start --vm-driver virtualbox --extra-config=apiserver.service-node-port-range=21-32767 > /dev/null
+minikube start --extra-config=apiserver.service-node-port-range=21-32767
 
 minikube dashboard & > /dev/null
 echo "대쉬보드를 실행합니다."
@@ -58,4 +58,4 @@ sh nginx_setup.sh
 
 echo "설치가 완료되었습니다!"
 
-export MINIKUBE_HOME=~/goinfre
+#export MINIKUBE_HOME=~/goinfre

@@ -1,5 +1,5 @@
 #! /bin/bash
-export MINIKUBE_HOME=~/goinfre
+#export MINIKUBE_HOME=~/goinfre
 cd ./srcs/wordpress/srcs
 
 # IP 처리하는 부분
@@ -21,11 +21,11 @@ sed "s/WORD_IP/$WORDPRESS_IP/g" ./data/wp-config.php > ./wp-config.php
 kubectl cp wordpress.sql $WORDPRESS_POD:/tmp/
 kubectl cp wp-config.php $WORDPRESS_POD:/etc/wordpress/
 kubectl exec $WORDPRESS_POD -- sh /tmp/init-wordpress.sh
+rm WORDPRESS_IP
+rm WORDPRESS_POD
 cd ..
 export MINIKUBE_HOME=~/goinfre
 docker build -t ft_wordpress . > /dev/null
 # 필요없는 파일들 삭제
-rm WORDPRESS_IP
-rm WORDPRESS_POD
 cd ../../
-export MINIKUBE_HOME=~/goinfre
+#export MINIKUBE_HOME=~/goinfre
