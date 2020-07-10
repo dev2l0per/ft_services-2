@@ -175,6 +175,7 @@
 - 그리고 이 wordpress에 접근할 권리가 있는 사용자를 추가하자. 이 값들은 나중에 phpmyadmin에서 사용하므로 잘 기억하자. (id : admin, password : tkdgur123)
 - 여기서 중요한게 db 생성 앞 뒤로 **flush privileges**를 해줘야 한다. 이 명령은 mysql server에게 지금 만든 테이블을 reload하라고 알려주는 역할을 한다. 왜인지는 모르겠지만 앞 뒤 모두 해줘야 정상적으로 작동한다.
    ```
+   mkdir -p /run/mysqld // 안해주면 소켓 문제 등 
    mysqld_install_db --user=root // mysql server 생성
    mysqld --user=root --bootstrap < init_mysql // bootstrap 옵션을 사용하면 서버를 본격적으로 실행하지 않는다. 따라서 db 를 넣어줄 때 이 옵션을 넣어주자. 솔직히 잘 모른다.
    mysqld --user=root // 서버 실행 
