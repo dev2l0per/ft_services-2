@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: mysql-pv
+    name: mysql
     labels:
         type: local
 spec:
-    storageClassName: mysql-db
+    storageClassName: mysql
     accessModes:
         - ReadWriteOnce
     capacity:
@@ -18,9 +18,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: mysql-pv-claim
+    name: mysql
 spec:
-    storageClassName: mysql-db
+    storageClassName: mysql
     accessModes:
         - ReadWriteOnce
     resources:

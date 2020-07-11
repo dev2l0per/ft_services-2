@@ -21,9 +21,9 @@ spec:
           ports:
             - containerPort: 3306
           volumeMounts:
-          - name: mysql-pv
-            mountPath: /var/lib/mysql/
+          - name: mysql
+            mountPath: /var/lib/mysql/ # !!! my.cnf를 보면 이 위치가 datadir로 설정되어서 데이터가 이 디렉토리에 저장된다는 걸 알 수 있다.
       volumes:
-      - name: mysql-pv
+      - name: mysql
         persistentVolumeClaim:
-          claimName: mysql-pv-claim
+          claimName: mysql
