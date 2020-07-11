@@ -27,12 +27,8 @@ data:
       index-version = "inmem" # 잘 모르겠다. 디폴트값 사용
       trace-logging-enabled = false # 디버깅 할 때 사용하면 될 듯.
       query-log-enabled = true # true로 하자. 실행할 때 오류나면 로그 보여줌
-      #cache-max-memory-size = 1073741824
       cache-max-memory-size = "1g"
-      #cache-snapshot-memory-size = 26214400
       cache-snapshot-memory-size = "25m"
-      #cache-snapshot-write-cold-duration = "10m0s"
-      #compact-full-write-cold-duration = "4h0m0s"
       compact-full-write-cold-duration = "4h"
       cache-snapshot-write-cold-duration = "10m"
       max-concurrent-compactions = 0
@@ -40,7 +36,6 @@ data:
       # 아래 두 개는 inmem 에 대한 옵션
       max-series-per-database = 1000000
       max-values-per-tag = 100000
-      # max-index-log-file-size = 1048576
       max-index-log-file-size = "1m"
  
     ###
