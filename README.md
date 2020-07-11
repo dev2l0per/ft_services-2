@@ -6,8 +6,24 @@
 - wordpress - mysql - phpmyadmin
 
 -----
+#### Pod가 아닌 Deployment로 컨테이너를 생성해야 하는 이유.
+- 하나의 파드는 여러 컨테이너가 엮여서 하나의 서비스를 만들 수 있다.
+- 엄밀히 말하면 서비스를 만드는건 아니다. 파드는 자체적으로 여러 컨테이너를 통해서 어떤 하나의 기능을 실행하고 있는데 이 기능은 외부로 노출되지 못하고 파드 자신에 갇혀서있는 상황이다. 물론 그렇게만 해도 되는 상황이 있겠지만 보통의 경우에는 이 ***기능***이 ***다른 파드 또는 외부***로 노출되기를 원할 수 도 있다.
+- 그걸 가능하게 해주는게 바로 ***서비스 객체***다.
+- 서비스 객체는 생성 될 때 어떤 파드를 서비스 할 지 결정한다. 만약 파드가 죽으면? 그러면 서비스 또한 끝난다. 즉 더 이상 아무런 기능을 하지 못하는 것.
+- 만약 죽은 파드가 절대로 멈추면 안되는 서비스라면 큰 일이 생길 수 도 있지 않을까?
+- 그렇다면 절대로 파드가 죽지 않게 만들자!
+- 어떻게 하면 파드가 절대 죽지 않게 만들 수 있을까....
+- 파드가 여러 컨테이너를 포함하는 객체인것처럼 파드를 관리하는 더 큰 상위 집합(= 객체)을 만들면 되지 않을까?
+- 그리고 이 파드를 포함하는 객체는 만약 파드가 죽으면 새로운 파드를 만드는 기능을 가지면 어떨까?
+- 그리고 새롭게 생긴 파드에 서비스가 연결되서 서비스를 끊기지 않게 만들면 좋을거 같다.
+- 이렇게해서 디플로이먼트 객체가 생겼다.
+- ***디플로이먼트 객체***를 생성하는 yaml 파일을 보면 아래쪽에 spec.template 부분이 있음. 이 부분이 파드와 컨테이너를 선언하는 부분.
+
+-----
 #### 참고
 [참고](https://itnext.io/kubernetes-in-a-nutshell-blog-series-c3a97fce9445)
+
 -----
 #### setup.sh
 - 클러스터
@@ -63,7 +79,7 @@
    - 설정 파일 넣기 -> ConfigMap
 - 먼저 Deployment의 spec.containers.VolumeMounts 설정을 통해서 Volume 될 위치를 정한다.
 - spec.Volume에서 persistentVolumeClaim, configMap 등을 지정해준다.
-- ConfigMap은 보통 외부로 노출되어도 되는 설정일 경우 kind:ConfigMap으로 하고 외부로 노출되면 안되는 경우는 kine:secret 으로 한다.
+- ConfigMap은 보통 외부로 노출되어도 되는 설정일 경우 kind:ConfigMap으로 하고 외부로 노출되면 안되는 경우는 kin:secret 으로 한다.
 - [ConfigMap](https://itnext.io/learn-how-to-configure-your-kubernetes-apps-using-the-configmap-object-d8f30f99abeb)
 - [Secret](https://medium.com/better-programming/how-to-use-kubernetes-secrets-for-storing-sensitive-config-data-f3c5e7d11c15)
 - [Volume]
