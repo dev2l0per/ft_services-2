@@ -195,7 +195,7 @@ spec:
         args: ["-c", "while true; do echo hello; sleep 10;done"]
 ```
 
-##### mysql
+***1. mysql***
 - mysqld -> mysql server
 - 처음 설치하면 mysql server을 실행할 준비가 되어있지 않다. 따라서 초기 세팅이 필요하다. 이때 사용하는 명령어는 [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html). 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
 - 여기서 root는 시스템 user다. 다른 user를 직접 만들고 해도 되는데 그때는 비밀번호 입력이 필요하다. 따라서 간편한 root를 쓰자
@@ -219,7 +219,7 @@ spec:
    FLUSH PRIVILEGES;
    ```
 
-##### phpmyadmin
+***2. phpmyadmin***
 - 앞에서 mysql을 이용해서 데이터베이스를 생성했다.  
 - 흠.. 근데 난 mysql 명령어 써서 DB 확인하고 생성하고.. 백업하고 이 모든 과정이 너무 복잡해. 못해먹겠다---> 그래서 있는게 phpmyadmin
 - phpmyadmin을 사용하면 mysql을 손쉽게 조작하고 볼 수 있다.
@@ -236,7 +236,7 @@ spec:
 - 왼쪽에 보면 wordpress라고 있다. 하지만 아직은 비어져있다.
 - wordpress에서 세팅을 하면 이 부분이 채워진다.
 
-##### wordpress
+***3. wordpress***
 - 여기서도 위와 마찬가지로 deployment로 파드를 만들고 컨테이너에 커맨드를줘서 자동으로 exit가 안되게 만들어주자.
 - 파드가 생성되었으면 컨테이너로 접속해서 wordpress 설치에 필요한 파일들을 다운 받아주자. 그리고 wp-config.php 파일을 /etc/wordpress/ 위치에 넣어주자.
 - 그리고 여기서도 php 관련 파일들을 다운 받아야한다. php 서버에 신호를 계속 보내야 하기 때문.
