@@ -166,9 +166,9 @@
 - 따라서 먼저 mysql을 설치하고 phpmyadmin을 mysql 서버에 연동시킨 다음에 wordpress을 실행하자.
 - ***wordpress의 데이터는 마지막에 넣어주자. 왜냐하면 넣어주는 데이터인 wordpress.sql에는 wordpress의 url, 호스트의 주소.. 가 Service 객체에 주어지는 external ip와 같아야한다. 따라서 wordpress.sql을 서비스가 된 후에 ip 정보를 수정해서 mysql에 넣어주는 방식으로 하자.***
 
-##### 아래의 과정은 도커 파일로 만들어서 하는게 아닌 ***쿠버네티스 디플로이먼트 객체를 생성하고 생성 된 파드 내의 컨테이너에서 작업하자!!!!***
-##### 아래 코드 처럼 디플로이먼트 객체를 생성해서 하자. 주의 할 점은 spec.container.command와 spec.container.args.
-##### 이 두 명령은 컨테이너가 시작되자마자 바로 종료되는 상황을 방지하기 위해 썼다. 물론 이 명령어가 아닌 다른 명령을 사용해도 됨.
+##### 도커 파일로 만들어서 하는게 아닌 ***쿠버네티스 디플로이먼트 객체를 생성하고 생성 된 파드 내의 컨테이너에서 작업하자!!!!***
+##### 주의 할 점은 특정 명령을 쓰지 않으면 파드가 바로 죽어버리는 상황이 발생하므로 command를 써주자.
+
 ```
 apiVersion: apps/v1
 kind: Deployment
@@ -203,6 +203,8 @@ spec:
 - 데이터를 넣기 위해서는 먼저 데이터의 테이블(?)을 생성해줘야 한다. 테이블을 wordpress로 만들어 주자.
 - 그리고 이 만들어진 wordpress 테이블에 접근 할 수 있는 계정을 생성하자. (id: admin, password: tkdgur123)
 - 여기서 중요한게 db 생성 앞 뒤로 **flush privileges**를 해줘야 한다. 이 명령은 mysql server에게 지금 만든 테이블을 reload하라고 알려주는 역할을 한다. 왜인지는 모르겠지만 앞 뒤 모두 해줘야 정상적으로 작동한다.
+- 마지막으로 mysqld --user=root 명령으로 서버를 시작하자.
+- 그 다음으로 서비스.yaml으로 서비스 객체를 만들자.
    ```
    mkdir -p /run/mysqld
    mysqld_install_db --user=root // mysql server 초기 세팅
@@ -224,9 +226,15 @@ spec:
 - 아래는 세팅과정
 - phpmyadmin 설치에 필요한 여러가지들을 다운 받아 주자.(Dockerfile 참고)
 - 그리고 먼저 만들어 놓은 config.inc.php도 /etc/phpmyadmin/에 넣어준다.
-- config.inc.php를 잠깐 설명하자면 아주 간단하다.
-- /\* Server parameter \*/ 이 부분만 손보면 된다. 이 부분은 이름 그대로 phpmyadmin이 관리할 mysql server다. 앞서서 따라서 port, user, password, 등을 앞서 설정해준 그대로 세팅해주면 된다.
+- config.inc.php은 접속할 mysql server의 정보를 입력해주면 됨.
+- /\* Server parameter \*/ 이 부분만 손보면 된다. 이 부분은 이름 그대로 phpmyadmin이 관리할 mysql server다. port, user, password, 등을 앞서 설정해준 그대로 세팅해주면 된다.
 - 여기서 configMap이라는 새로운 기능을 알아보자. 이 기능은 설정파일 등을 Dockerfile에서 건네주는게 아닌 yaml 파일로 건네줄 수 있게 만들어 주는 기능이다. 이건 올려놓은 yaml파일을 보고 하면 된다.
+- 이제 php -S 0.0.0.0:5000 -t /etc/phpmyadmin/ 명령으로 phpmyadmin 를 시작하고 서비스 객체를 만들자.
+- phpmyadmin의 경우 mysql과 다르게 외부에서 접근할 수 있어야 하므로 type을 LoadBalancer로 한다.
+- 대쉬보드에 phpmyadmin의 endpoint로 접속하자.
+- id: admin, password: tkdgur123
+- 왼쪽에 보면 wordpress라고 있다. 하지만 아직은 비어져있다.
+- wordpress에서 세팅을 하면 이 부분이 채워진다.
 
 ##### wordpress
 - 여기서도 위와 마찬가지로 deployment로 파드를 만들고 컨테이너에 커맨드를줘서 자동으로 exit가 안되게 만들어주자.
