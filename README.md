@@ -38,7 +38,7 @@
 
 -----
 #### Metallb
-- Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다.
+- Service 객체의 Type을 NodePort가 아닌 LoadBalancer로 한다. 매우 중요!!!!
 - [참고사이트](https://medium.com/@shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe)
 - 설치
    1. Kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
@@ -70,14 +70,14 @@
    - [한글사이트](https://itnext.io/learn-about-the-basics-of-kubernetes-persistence-part-1-b1fa2847768f)
 
 -----
-#### 컨테이너로 파일 전송하는 법
+#### 컨테이너로 파일 전송하는 법 -> 쿠버네티스 파드 내의 컨테이너로 전송하기 위해서는 docker를 kubectl로 mycontainer를 pod 이름으로 바꿔주면 된다.
 - 호스트에서 컨테이너로
   ```
-  docker cp /path/foo.txt mycontainer:/path/foo.txt
+  docker cp /path/foo.txt [mycontainer]:/path/foo.txt
   ```
 - 컨테이너에서 호스트
   ```
-  docker cp mycontainer:/path/foo.txt /path/foo.txt
+  docker cp [mycontainer]:/path/foo.txt /path/foo.txt
   ```
 
 -----
@@ -165,32 +165,58 @@
 - 여기서 목표는 wordpress의 데이터가 담겨있는 mysql 을 구동하고 wordpress와 phpmyadmin을 연결시키는 것.
 - 따라서 먼저 mysql을 설치하고 phpmyadmin을 mysql 서버에 연동시킨 다음에 wordpress을 실행하자.
 - ***wordpress의 데이터는 마지막에 넣어주자. 왜냐하면 넣어주는 데이터인 wordpress.sql에는 wordpress의 url, 호스트의 주소.. 가 Service 객체에 주어지는 external ip와 같아야한다. 따라서 wordpress.sql을 서비스가 된 후에 ip 정보를 수정해서 mysql에 넣어주는 방식으로 하자.***
+
+##### 아래의 과정은 도커 파일로 만들어서 하는게 아닌 ***쿠버네티스 디플로이먼트 객체를 생성하고 생성 된 파드 내의 컨테이너에서 작업하자!!!!***
+##### 아래 코드 처럼 디플로이먼트 객체를 생성해서 하자. 주의 할 점은 spec.container.command와 spec.container.args.
+##### 이 두 명령은 컨테이너가 시작되자마자 바로 종료되는 상황을 방지하기 위해 썼다. 물론 이 명령어가 아닌 다른 명령을 사용해도 됨.
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: alpine
+        ports:
+          - containerPort: 3306
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
+```
+
 ##### mysql
 - mysqld -> mysql server
-- 처음 설치하면 mysql server을 실행할 준비가 되어있지 않다. 따라서 이 작업을 해야한다. 아래 명령어를 입력하면 됨.
+- 처음 설치하면 mysql server을 실행할 준비가 되어있지 않다. 따라서 초기 세팅이 필요하다. 이때 사용하는 명령어는 [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html). 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
 - 여기서 root는 시스템 user다. 다른 user를 직접 만들고 해도 되는데 그때는 비밀번호 입력이 필요하다. 따라서 간편한 root를 쓰자
-- [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html) 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
 - mysql 서버를 만들었으니깐 이제 데이터를 넣어야 한다.
-- 데이터가 들어갈 DB를 만들어주자. DB의 이름은 wordpress로 한다.
-- 그리고 이 wordpress에 접근할 권리가 있는 사용자를 추가하자. 이 값들은 나중에 phpmyadmin에서 사용하므로 잘 기억하자. (id : admin, password : tkdgur123)
+- 데이터를 넣기 위해서는 먼저 데이터의 테이블(?)을 생성해줘야 한다. 테이블을 wordpress로 만들어 주자.
+- 그리고 이 만들어진 wordpress 테이블에 접근 할 수 있는 계정을 생성하자. (id: admin, password: tkdgur123)
 - 여기서 중요한게 db 생성 앞 뒤로 **flush privileges**를 해줘야 한다. 이 명령은 mysql server에게 지금 만든 테이블을 reload하라고 알려주는 역할을 한다. 왜인지는 모르겠지만 앞 뒤 모두 해줘야 정상적으로 작동한다.
    ```
-   mkdir -p /run/mysqld // 안해주면 소켓 문제 등 
-   mysqld_install_db --user=root // mysql server 생성
-   mysqld --user=root --bootstrap < init_mysql // bootstrap 옵션을 사용하면 서버를 본격적으로 실행하지 않는다. 따라서 db 를 넣어줄 때 이 옵션을 넣어주자. 솔직히 잘 모른다.
+   mkdir -p /run/mysqld
+   mysqld_install_db --user=root // mysql server 초기 세팅
+   mysqld --user=root --bootstrap < init_mysql // bootstrap 옵션을 사용하면 서버를 실행하지 않은 상태로 DB 테이블을 만들 수 있다. 따라서 db 를 넣어줄 때 이 옵션을 넣어주자. 솔직히 잘 모른다.
    mysqld --user=root // 서버 실행 
    ```
-   - init_mysql
-      ```
-      FLUSH PRIVILEGES;
-      CREATE DATABASE wordpress;
-      GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' IDENTIFIED BY 'tkdgur123' WITH GRANT OPTION;
-      FLUSH PRIVILEGES;
-      ```
-- 다음 단계는 database를 만드는 단계다. database 이름은 wordpress로 하고 
+- init_mysql
+   ```
+   FLUSH PRIVILEGES; // 테이블을 reload 하라는 명령. 앞 뒤 모두 해줘야지 정상적으로 작동한다.
+   CREATE DATABASE wordpress;
+   GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' IDENTIFIED BY 'tkdgur123' WITH GRANT OPTION;
+   FLUSH PRIVILEGES;
+   ```
 
-##### MYSQL
-- 여기서 목표는 mysql 데이터 베이스를 가동하고 
 ##### phpmyadmin
    - id : admin
    - password : tkdgur123
