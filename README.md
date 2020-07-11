@@ -316,6 +316,16 @@ spec:
       - [ http ] 부분을 보면 ssl 관련 설정이 있는데 만약 채점 기준에 nginx 를 제외한 다른 서비스들도 ssl을 사용해야 한다고 하면 여기를 수정하면 될 듯.
       - [[graphite]] 부분을 보면 templates 설정이 있는데 이 부분 그래픽화를 어떻게 할지 결졍하는듯. 여기를 참고https://gatling.io/docs/current/realtime_monitoring
    ```
+-  덧붙임..
+   - [https://hub.docker.com/_/influxdb](DATABASE INITIALIZATION에 환경변수를 이용해서 초기화하는 방법 나옴)
+   - influxdb의 도커 파일을 보면 간단해도 너무 간단하다. 그냥 다운 받고 influxdb 서버를 실행하는게 끝이다.
+   - 그러면 도대체 언제 언제 DB를 만들어주고 유저나 어드민등을 언제 세팅해준거지?
+   - 이 부분은 yaml 부분을 확인해야 한다.
+   - 우선 influxdb-secret.yaml을 보자
+      - 아래 데이터 부분을 보면 여러 VALUE: KEY 쌍이 보인다. 이 부분이 이제 환경변수가 되어서 influxdb 컨테이너 안에 들어간다.
+      - influxdb는 이 환경변수들을 이용해서 서버의 initialization을 한다.
+   - influxdb-config.yaml
+      - 이 파일은 deployment의 volume 부분을 통해서 파일의 형태로 컨테이너 안에 들어가게 된다.
 ***2. TELEGRAF***
 
 - telegraf는 data collector이다.
@@ -331,6 +341,14 @@ spec:
    예를 들면 aws, azure 등? 우리는 쿠버테니스 클러스터 내에서 동작하는 파드(컨테이너)에서 나오는 데이터를 수집하므로 docker 부분을 찾고
    주석을 풀어주기만 하면 끝!
    ```
+- 덧붙임...
+   - telegraf의 dockerfile도 influxdb만큼이나 너무 간단하다. 그냥 다운 받고 실행하는게 끝.
+   - 대신 다른 설정파일들을 yaml 형태로 선언해놓음.
+   - telegraf는 influxdb와 조금은 다르다. secrets.yaml에 있는 환경변수들이 어떤걸 초기화하는데 사용되는게 아니라 그냥 설정 파일에 덧붙여진다.
+   - 설정파일은 config.yaml 에 있다. 조금만 내려보면 $xxxx 처럼 $ 표시로 시작하는 변수들이 있다. 이 부분들이 이제 secrets.yaml에서 선언한 환경변수가 붙여지는 위치.
+   - 보통 파일 같으면 이렇게 파일의 값에 환경변수를 넣으면 적용이 안되겠지만 telegraf.conf 파일은 적용됨.
+   - 문자 환경변수면 따옴표 사용하고 숫자나 불린 값이면 따옴표를 사용하지 말자.
+   - [https://docs.influxdata.com/telegraf/v1.14/administration/configuration/#set-environment-variables](Set environments variables 확인하기)
    
 ***3. GRAFANA***
 - 데이터를 수집하고 저장까지 했으므로 이제 GRAFANA를 이용해서 시각화를 하자.
