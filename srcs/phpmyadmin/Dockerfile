@@ -9,8 +9,6 @@ RUN rm -f /phpMyAdmin-4.9.5-all-languages.tar.gz
 RUN mv /phpMyAdmin-4.9.5-all-languages /etc/phpmyadmin
 RUN rm -rf /var/cache/apk/*
 
-COPY srcs/config.inc.php /etc/phpmyadmin/
-
 EXPOSE 5000
 
 CMD php -S 0.0.0.0:5000 -t /etc/phpmyadmin/
