@@ -218,11 +218,32 @@ spec:
    ```
 
 ##### phpmyadmin
-   - id : admin
-   - password : tkdgur123
+- 앞에서 mysql을 이용해서 데이터베이스를 생성했다.  
+- 흠.. 근데 난 mysql 명령어 써서 DB 확인하고 생성하고.. 백업하고 이 모든 과정이 너무 복잡해. 못해먹겠다---> 그래서 있는게 phpmyadmin
+- phpmyadmin을 사용하면 mysql을 손쉽게 조작하고 볼 수 있다.
+- 아래는 세팅과정
+- phpmyadmin 설치에 필요한 여러가지들을 다운 받아 주자.(Dockerfile 참고)
+- 그리고 먼저 만들어 놓은 config.inc.php도 /etc/phpmyadmin/에 넣어준다.
+- config.inc.php를 잠깐 설명하자면 아주 간단하다.
+- /\* Server parameter \*/ 이 부분만 손보면 된다. 이 부분은 이름 그대로 phpmyadmin이 관리할 mysql server다. 앞서서 따라서 port, user, password, 등을 앞서 설정해준 그대로 세팅해주면 된다.
+- 여기서 configMap이라는 새로운 기능을 알아보자. 이 기능은 설정파일 등을 Dockerfile에서 건네주는게 아닌 yaml 파일로 건네줄 수 있게 만들어 주는 기능이다. 이건 올려놓은 yaml파일을 보고 하면 된다.
+
 ##### wordpress
-   - id : admin, user1, user2
-   - password : tkdgur123
+- 여기서도 위와 마찬가지로 deployment로 파드를 만들고 컨테이너에 커맨드를줘서 자동으로 exit가 안되게 만들어주자.
+- 파드가 생성되었으면 컨테이너로 접속해서 wordpress 설치에 필요한 파일들을 다운 받아주자. 그리고 wp-config.php 파일을 /etc/wordpress/ 위치에 넣어주자.
+- 그리고 여기서도 php 관련 파일들을 다운 받아야한다. php 서버에 신호를 계속 보내야 하기 때문.
+- 필요한 파일들을 설치해줬으면 바로 php -S 0.0.0.0:5050 -t /etc/phpmyadmin 을 해주자
+- 그리고 wordpress-service.yaml을 이용해서 서비스 객체를 만들어주자.
+- 대쉬보드에 접속해서 wordpress의 endpoint에 접속하자. 접속하면 처음 하는 부분이 나온다. 이 부분은 admin을 만드는 부분이므로 나중에 헷갈리지 않게 id : admin, password : 마음대로 로 만들어주자.
+- 이렇게 admin을 생성했으면 pdf에 따라 여러 user를 만들어주자
+- 여기까지 했으면 이제 post를 올리거나 코멘트를 달아보자.
+- ***마지막으로 지금까지 wordpress 조작한 내용들을 export 하자!***
+- 이 부분은 먼저 실행해 놓은 phpmyadmin에서 하면 된다.
+- phpmyadmin의 endpoint에 접속하자. 아이디 비번은 mysql server 만들때 사용했던 걸 이용하면 된다.
+- 접속하면 왼쪽에 wordpress를 누루자. 아까전에는 볼 수 없었던 데이터가 생성된 걸 확인할 수 있다. 그리고 위를 보면 ***EXPORT*** 부분이 있다. 이 버튼을 눌러서 지금까지 저장한 내용을 추출하자.
+
+- 지금까지 mysql, phpmyadmin, wordpress 등을 세팅하는 법을 알아봤다. 이제 이 내용들을 Dockerfile에 저장하고 자동화 시키는 작업을 하면 된다.
+
 ***wordpress같은 경우 설정 파일에 있는 host의 주소가 external ip와 같거나 비슷해야지 wordpress 사이트에 접속이 된다. 따라서 인위적으로 값을 바꿔줘야하는데 두가지 방법있음***
    1. wordpress_service.yaml에서 externalIPs 옵션을 주는 방법. 이 하지만 이 방법을 쓰면 wordpress가 노출되는 포트가 두개가 되므로 pdf에서 컷 된다. 따라서 아래 방법 사용.
    2. 일단 wordpress를 실행 시키는데, 이 때 wordpress.sql을 데이터 베이스에 넣지 않는다. 먼저 서비스를 문제 없이 작동시키고 서비스가 돌아가면 생기는 ***external ip***를 가져와서 wordpress.sql 파일과 wp-config.php 파일에 넣어준다. 그리고 kubectl 명령어들을 이용해서 wordpress 컨테이너에 설정 파일들을 다시 넣어주고 데이터베이스에 wordpress.sql 넣어준다.
