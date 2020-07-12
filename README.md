@@ -2,7 +2,7 @@
 
 -----
 #### Todo
-- 서비스 좀비로 만들기 -> 
+- 서비스 좀비로 만들기 -> 가능한건가?
 
 -----
 #### Pod가 아닌 Deployment로 컨테이너를 생성해야 하는 이유.
@@ -153,9 +153,32 @@
   ssh sanam@(minikube ip) -p PORT
   ```
 - 301...to...443의 의미가 뭘까...
-   - http://localhost 로 접속하면 자동으로 https 로 이동한다는걸까..?
+   - http로 접속해도 자동으로 https
 -----
 #### ftps
+- ftp는 파일전송 프로토콜
+- ftps는 ftp에 ssl을 붙임. nginx 때 했던 것처럼 openssl을 이용하면 됨.
+
+- ftps 이용할 user 생성.
+   1. user를 만들 때 user의 HOME을 같이 설정하자.
+      ```
+      mkdir -p /ftps/sanam
+      adduser --home=/ftps/sanam -D sanam
+      ```
+   2. 생성한 user인 sanam에 비밀번호를 설정하자.
+      ```
+      echo "sanam:123456789" | chpasswd
+      ```
+- openssl 설치
+   1. nginx 때는 설치 과정중에 질문에 대한 응답을 -subj 명령을 줘서 했다. 이번에는 openssl.conf 파일을 만들고 미리 설정해둔 값을 --config 옵션으로 넣어주는 방식으로 했음.
+   2. man req, [https://www.phildev.net/ssl/opensslconf.html](openssl.conf) 참고
+   
+- ftps 설치. vsftpd 이용
+   - apk add vsftpd
+   - /etc/vsftpd/vsftpd.conf 에 설정 파일이 생긴다. [https://linux.die.net/man/5/vsftpd.conf](여기를 참고해서 설정을 건드리자)
+
+- 모든걸 다 준비했으니 이제 ftps 서버를 시작하자. 설정파일을 인자로 주자.
+- /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
 
 - 파일 전송
   ```
