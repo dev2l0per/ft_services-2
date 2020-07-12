@@ -2,10 +2,6 @@
 
 mkdir -p /ftps/sanam
 adduser --home=/ftps/sanam -D sanam
-mkdir -p /ftps/sanam/uploads
-chmod 777 /ftps/sanam/uploads
-chown nobody:nogroup /ftps
-chmod a-w /ftps
 
 echo "sanam:123456789" | chpasswd
 echo "sanam" >> etc/vsftpd/vsftpd.userlist
