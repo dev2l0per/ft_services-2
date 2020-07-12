@@ -2,8 +2,7 @@
 
 -----
 #### Todo
-- 서비스 좀비로 만들기
-- wordpress - mysql - phpmyadmin
+- 서비스 좀비로 만들기 -> 
 
 -----
 #### Pod가 아닌 Deployment로 컨테이너를 생성해야 하는 이유.
@@ -289,6 +288,13 @@ spec:
   - [공홈 가이드](https://kubernetes.io/ko/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/)
   - [차근차근 가이드](https://medium.com/@containerum/how-to-deploy-wordpress-and-mysql-on-kubernetes-bda9a3fdd2d5)
   - [What is PV, PVC?](https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/)
+  
+***4. Persitent Volume***
+- mysql의 my.cnf 파일을 보면 ***datadir*** 이 보인다. 이 부분이 앞으로 mysql 데이터가 저장되는 위치.
+- 이제 이 부분을 따로 빼서 Persistent volume으로 만들면 된다.
+- yaml 파일로 가서 작업을 하자.
+- 여기서 하나 팁은 굳이 PV를 만들 필요는 없다는 거다.
+- PVC(Persitent Volume Claim)을 만들고 metadata 부분을 잘 건드려줌주면 만약 해당하는 PV가 없을시 자동으로 생
 
 -----
 #### Grafana, Influxdb, Telegraf
