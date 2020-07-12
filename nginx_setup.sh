@@ -10,5 +10,5 @@ rm index.html.t1
 rm index.html.t2
 cd ../
 docker build -t ft_nginx . > /dev/null
-kubectl create -f ../yaml/nginx.yaml > /dev/null
+kubectl create -f ../yaml/nginx > /dev/null
 cd ../../../

@@ -42,7 +42,7 @@ docker build -t ft_telegraf ./srcs/telegraf > /dev/null
 echo "디플로이먼트와 서비스 객체를 생성합니다."
 kubectl create -f ./srcs/yaml/metallb/metallb_control.yaml > /dev/null
 kubectl create -f ./srcs/yaml/metallb/metallb_config.yaml > /dev/null
-kubectl create -f ./srcs/yaml/ftps.yaml > /dev/null
+kubectl create -f ./srcs/yaml/ftps > /dev/null
 kubectl create -f ./srcs/yaml/grafana > /dev/null
 kubectl create -f ./srcs/yaml/influxdb > /dev/null
 kubectl create -f ./srcs/yaml/mysql > /dev/null
