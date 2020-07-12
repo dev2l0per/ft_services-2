@@ -30,8 +30,8 @@ define( 'DB_PASSWORD', 'tkdgur123' );
 
 /** MySQL hostname */
 define( 'DB_HOST', 'mysql' );
-define( 'WP_HOME', 'http://172.17.0.2:5050' );
-define( 'WP_SITEURL', 'http://172.17.0.2:5050' );
+define( 'WP_HOME', 'http://172.17.0.5:5050' );
+define( 'WP_SITEURL', 'http://172.17.0.5:5050' );
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );
