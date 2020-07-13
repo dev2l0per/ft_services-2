@@ -18,8 +18,20 @@
 #### Health Check
 - 디플로이먼트에서 관리하는 컨테이너가 만약 우리가 원하는 상태가 아니게 될 때, 디플로이먼트는 컨테이너를 강제로 ***재시작***시킨다.
 - 그렇다면 디플로이먼트는 어떤 방법으로 컨테이너가 정상인지 비정상인지 구별할 수 있는걸까?
-- 실제로 비정상인지 가려내는 작업은 [kubectl](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)에서 수행한다. kubectl은 주기적으로 컨테이너의 상황을 ***진단(diagnostic)***한다. 
-
+- 실제로 비정상인지 가려내는 작업은 [kubectl](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)에서 수행한다. kubectl은 주기적으로 컨테이너의 상황을 ***진단(diagnostic)*** 한다. 
+- 컨테이너는 프로그램이 실행중이지 않으면 바로 종료되는 특성을 갖고 있다. 모종의 이유로 컨테이너에서 실행중이던 프로그램이 종료되면 컨테이너는 죽고 디플로이먼트는 파드를 재시작한다.
+- 그러니깐 아주 초보적인 수준에서는 따로 health check을 하지 않아도 파드는 재시작된다.
+- 어떤 컨테이너가 두 개 이상의 프로그램을 실행해야 하는 경우를 생각해보자.
+- 만약 이 경우 하나의 프로그램이 강제 종료 된다면? 아래의 두 가지 경우가 있다.
+   - 종료된 프로그램이 CMD 명령에 의해 시작된 경우.
+      - 이 때의 경우는 디플로이먼트에서 재시작시킨다.
+   - ***CMD 명령 이전에 실행된 프로그램인 경우***
+      - 이 떄가 문제다. 기본적으로 kubectl은 CMD를 기준으로 파드의 Health check을 하기 때문에 그냥 실행된 프로그램일 경우 종료되어도 아무런 문제가 없다고 생각한다.
+      - 따라서 이 경우를 Health Check 대상에 포함시켜야한다.
+- Headlth Check 대상이 되는 세 가지 경우
+   - CMD
+   - HTTP
+   - PORT
 - 채점 마지막 부분에 kubectl exec deploy/SERVICE -- pkill APP 을 이용해서 특정 프로세스를 죽이라는 항목이 있다.
 - 다른 컨테이너들은 신경 쓸 필요 없지만 nginx 만큼은 신경써야한다.
 - MYSQL을 생각해보자.
