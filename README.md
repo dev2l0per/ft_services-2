@@ -15,7 +15,11 @@
 - 이렇게해서 디플로이먼트 객체가 생겼다.
 - ***디플로이먼트 객체***를 생성하는 yaml 파일을 보면 아래쪽에 spec.template 부분이 있음. 이 부분이 파드와 컨테이너를 선언하는 부분.
 
-#### 채점 항목에서 주의 할 것.
+#### Health Check
+- 디플로이먼트에서 관리하는 컨테이너가 만약 우리가 원하는 상태가 아니게 될 때, 디플로이먼트는 컨테이너를 강제로 ***재시작***시킨다.
+- 그렇다면 디플로이먼트는 어떤 방법으로 컨테이너가 정상인지 비정상인지 구별할 수 있는걸까?
+- 실제로 비정상인지 가려내는 작업은 [https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/](kubectl)에서 수행한다. kubectl은 주기적으로 컨테이너의 상황을 ***진단(diagnostic)***한다. 
+
 - 채점 마지막 부분에 kubectl exec deploy/SERVICE -- pkill APP 을 이용해서 특정 프로세스를 죽이라는 항목이 있다.
 - 다른 컨테이너들은 신경 쓸 필요 없지만 nginx 만큼은 신경써야한다.
 - MYSQL을 생각해보자.
