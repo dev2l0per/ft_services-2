@@ -201,7 +201,7 @@
    
 - ftps 설치. vsftpd 이용
    - apk add vsftpd
-   - /etc/vsftpd/vsftpd.conf 에 설정 파일이 생긴다. [https://linux.die.net/man/5/vsftpd.conf](여기를 참고해서 설정을 건드리자)
+   - /etc/vsftpd/vsftpd.conf 에 설정 파일이 생긴다. [여기를 참고해서 설정을 건드리자](https://linux.die.net/man/5/vsftpd.conf)
 
 - 모든걸 다 준비했으니 이제 ftps 서버를 시작하자. 설정파일을 인자로 주자.
 - /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
