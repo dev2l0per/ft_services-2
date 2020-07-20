@@ -197,7 +197,7 @@
       ```
 - openssl 설치
    1. nginx 때는 설치 과정중에 질문에 대한 응답을 -subj 명령을 줘서 했다. 이번에는 openssl.conf 파일을 만들고 미리 설정해둔 값을 --config 옵션으로 넣어주는 방식으로 했음.
-   2. man req, [https://www.phildev.net/ssl/opensslconf.html](openssl.conf) 참고
+   2. man req, [openssl.conf](https://www.phildev.net/ssl/opensslconf.html) 참고
    
 - ftps 설치. vsftpd 이용
    - apk add vsftpd
