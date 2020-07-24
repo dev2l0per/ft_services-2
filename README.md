@@ -1,5 +1,19 @@
 # ft_serivces
 
+#### 참고
+[참고](https://itnext.io/kubernetes-in-a-nutshell-blog-series-c3a97fce9445)
+
+-----
+#### 시작하기전 클러스터에서 세팅
+
+- 미니큐브 홈 위치를 goinfre로 변경해줘야함.
+- vim ~/.zshrc 를 열어서 마지막 줄에 아래 문구를 입력해주자.
+- 그리고 source 명령어로 적용.
+
+```
+export MINIKUBE_HOME=~/goinfre
+```
+
 -----
 #### Pod가 아닌 Deployment로 컨테이너를 생성해야 하는 이유.
 - 하나의 파드는 여러 컨테이너가 엮여서 하나의 서비스를 만들 수 있다.
@@ -15,40 +29,39 @@
 - 이렇게해서 디플로이먼트 객체가 생겼다.
 - ***디플로이먼트 객체***를 생성하는 yaml 파일을 보면 아래쪽에 spec.template 부분이 있음. 이 부분이 파드와 컨테이너를 선언하는 부분.
 
+-----
 #### Health Check
 - 디플로이먼트에서 관리하는 컨테이너가 만약 우리가 원하는 상태가 아니게 될 때, 디플로이먼트는 컨테이너를 강제로 ***재시작***시킨다.
-- 그렇다면 디플로이먼트는 어떤 방법으로 컨테이너가 정상인지 비정상인지 구별할 수 있는걸까?
-- 실제로 비정상인지 가려내는 작업은 [kubectl](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)에서 수행한다. kubectl은 주기적으로 컨테이너의 상황을 ***진단(diagnostic)*** 한다. 
-- 컨테이너는 프로그램이 실행중이지 않으면 바로 종료되는 특성을 갖고 있다. 모종의 이유로 컨테이너에서 실행중이던 프로그램이 종료되면 컨테이너는 죽고 디플로이먼트는 파드를 재시작한다.
-- 그러니깐 아주 초보적인 수준에서는 따로 health check을 하지 않아도 파드는 재시작된다.
+- 그렇다면 디플로이먼트는 어떤 방법으로 컨테이너가 정상인지 판단할까?
+- 실제로 비정상인지 가려내는 작업은 [kubectl](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)에서 수행한다. kubectl은 주기적으로 컨테이너의 상태를 ***진단(diagnostic)*** 한다. 
+- 컨테이너는 프로그램이 실행중이지 않으면 바로 종료되는 특성을 갖고 있다. 모종의 이유로 컨테이너에서 실행중이던 프로그램이 종료되면 컨테이너는 죽고 디플로이먼트는 파드를 재시작한다. 따라서 하나의 프로그램만 돌리는 컨테이너의 경우에는 특별한 작업을 하지 않아도 됨.
 - 어떤 컨테이너가 두 개 이상의 프로그램을 실행해야 하는 경우를 생각해보자.
 - 만약 이 경우 하나의 프로그램이 강제 종료 된다면? 아래의 두 가지 경우가 있다.
    - 종료된 프로그램이 CMD 명령에 의해 시작된 경우.
       - 이 때의 경우는 디플로이먼트에서 재시작시킨다.
    - ***CMD 명령 이전에 실행된 프로그램인 경우***
-      - 이 떄가 문제다. 기본적으로 kubectl은 CMD를 기준으로 파드의 Health check을 하기 때문에 그냥 실행된 프로그램일 경우 종료되어도 아무런 문제가 없다고 생각한다.
+      - 이 경우에 문제가 발생한다. 기본적으로 kubectl은 CMD를 기준으로 파드의 Health check을 하기 때문에 그냥 실행된 프로그램일 경우 종료되어도 아무런 문제가 없다고 생각한다.
       - 따라서 이 경우를 Health Check 대상에 포함시켜야한다.
 - Headlth Check 대상이 되는 세 가지 경우
-   - CMD
+   - CMD -> 따로 옵션을 주지 않아도 됨.
    - HTTP
    - PORT
-- 채점 마지막 부분에 kubectl exec deploy/SERVICE -- pkill APP 을 이용해서 특정 프로세스를 죽이라는 항목이 있다.
-- 다른 컨테이너들은 신경 쓸 필요 없지만 nginx 만큼은 신경써야한다.
-- MYSQL을 생각해보자.
+
+- MYSQL과 NGNINX를 예로 마무리.
    ```
    kubectl exec deploy/mysql -- pkill mysqld
    ```
 - 위와 같은 명령을 내리면 mysql 컨테이너에서 실행되고 있는 mysql 서버가 죽는다. 이렇게 되면 당연히 컨테이너는 디폴리이먼트에서 원하는 상태가 아니게 되므로 디플로이먼트는 컨테이너(파드)를 재시작한다.
-- 이제 NGINX를 생각해보자. nginx는 nginx도 실행시키지만 sshd 또한 실행시킨다.
-- 중요한건 나같은 경우 최종적으로 CMD nginx -g 'daemon off;'로 컨테이너를 만들었기 때문에 pkill sshd를 해도 컨테이너가 재시작하지 않는다.(nginx를 pkill하면 당연히 재시작됨)
+- 이제 NGINX를 생각해보자. Nginx에서는 nginx와 ssh 서비스가 동작하길 원한다.
+- 나같은 경우 최종적으로 CMD nginx -g 'daemon off;'로 컨테이너를 실행하기 때문에 pkill sshd를 해도 컨테이너가 재시작하지 않는다.(nginx를 pkill하면 당연히 재시작됨)
 - 따라서 sshd가 죽어도 재시작되는 상황을 우리는 원함.
 - 이 경우는 livenessProbe 를 활용하면 된다.
 
------
-#### 참고
-[참고](https://itnext.io/kubernetes-in-a-nutshell-blog-series-c3a97fce9445)
+[참고사이트1](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/)
+[참고사이트2](https://bcho.tistory.com/1264)
 
 -----
+
 #### setup.sh
 - 클러스터
    ```
@@ -89,7 +102,6 @@
    ```
    이후 각 서비스의 External-ip로 접속하면 된다.
 
-#### Metallb && MINIKUBE 두 개의 키워드를 같이 검색하면 잘 나오는듯?
 -----
 #### Volume은 왜 필요한가?
 - Kubernetes에서 Deploy를 하면 파드가 생성된다. 그리고 파드는 하나의 서비스를 실행할 수 있다.
@@ -97,7 +109,7 @@
 - 파드가 자동으로 힐링된다고 하자. 거기까지는 좋다. 하지만 파드가 자동으로 다시 시작이 되면 이전에 삭제된 파드에 있던 데이터는 어떻게 되지?
 - docker run -it alpine /bin/sh 로 작업을 하고 exit 하면 작업했던 모든 기록들이 삭제되는걸 익히 알고있듯이 파드가 삭제되면 안에 있던 데이터들은 다 날아가는게 아닌가? 만약 그 안에 아주 중요한 데이터가 있다고 하면 자동 복구라는건 빛살좋은 개살구 아닌가?
 - 일단은 삭제 되는게 맞다! 하지만 Kubernetes는 파드 안에 있는 컨테이너의 어느 특정 위치를 Volume로 지정해서 데이터를 저장시키는 엄청난 기능이 있다!
-- 이 기능을 사용하면 파드가 재시작되어도 우리가 지정했던 그 위치의 데이터는 삭제되기 이전 그 상태 그대로 남아있다!
+- 이 기능을 사용하면 파드가 재시작되어도 우리가 지정했던 그 위치의 데이터는 삭제되기 이전 그 상태 그대로 남아있다.
 - Volume 기능은 데이터를 저장할 목적으로도 사용되지만 이 목적만이 아니라 어떤 파일 자체를 컨테이너에 넣을 수 있는 기능도 제공한다.(보통 설정 파일을 넣는 역할을 하는거 같다.)
    - 영구적으로 파일을 저장 -> persistentVolumeClaim
    - 설정 파일 넣기 -> ConfigMap
@@ -124,39 +136,6 @@
 #### Kubectl 명령어
 
 - [Kubectl cheat sheet](https://kubernetes.io/ko/docs/reference/kubectl/cheatsheet/)
-
------
-#### Minikube 명령어
-- 각 서비스로의 접속을 미니큐브로 편리하게 할 수 있다!
-
-- 기본 Port range 바꾸는 법
-   ```
-   minikube start --extra-config=apiserver.service-node-port-range=21-32767
-   ````
-- Dashboard
-  ```
-  minikube dashboard
-  ```
-- Service 확인하기
-  ```
-  minikube service list
-  ```
-- minikube ip -> 나중에 ingress로 연결되서 nginx index.html 화면 띄움
-  ```
-  minikube ip
-  ```
-- 애드온 확인
-  ```
-  minikube addons list
-  ```
-- addon 활성화
-  ```
-  minikube addons enable [addome]
-  ```
-- env
-  ```
-  eval $(minikube docker-env)
-  ```
 
 -----
 #### yaml 파일
@@ -204,7 +183,9 @@
    - /etc/vsftpd/vsftpd.conf 에 설정 파일이 생긴다. [여기를 참고해서 설정을 건드리자](https://linux.die.net/man/5/vsftpd.conf)
 
 - 모든걸 다 준비했으니 이제 ftps 서버를 시작하자. 설정파일을 인자로 주자.
-- /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+   ```
+   /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+   ```
 
 - 파일 전송
   ```
@@ -213,10 +194,12 @@
     // --ssl : ftps 쓰기 위함
     // -k : 인증 문제 무시
   ```
+  
 - 파일 다운로드
    ```
    curl -u sanam:123456789 'ftp://EXTERNAL-IP:21/toDOWNLOAD' --ssl -k -o ./DOWNLOADED
    ```
+   
 - 파일 전송 확인
   ```
     kubectl get pods // ftp 파드 이름 확인
@@ -230,7 +213,7 @@
 - 따라서 먼저 mysql을 설치하고 phpmyadmin을 mysql 서버에 연동시킨 다음에 wordpress을 실행하자.
 - ***wordpress의 데이터는 마지막에 넣어주자. 왜냐하면 넣어주는 데이터인 wordpress.sql에는 wordpress의 url, 호스트의 주소.. 가 Service 객체에 주어지는 external ip와 같아야한다. 따라서 wordpress.sql을 서비스가 된 후에 ip 정보를 수정해서 mysql에 넣어주는 방식으로 하자.***
 
-##### 도커 파일로 만들어서 하는게 아닌 ***쿠버네티스 디플로이먼트 객체를 생성하고 생성 된 파드 내의 컨테이너에서 작업하자!!!!***
+##### 도커 파일로 만들어서 하는게 아닌 ***쿠버네티스 디플로이먼트 객체를 생성하고 생성 된 파드 내의 컨테이너에서 작업하면서 도커 파일을 만들어주자!***
 ##### 주의 할 점은 특정 명령을 쓰지 않으면 파드가 바로 죽어버리는 상황이 발생하므로 command를 써주자.
 
 ```
@@ -260,8 +243,7 @@ spec:
 ```
 
 ***1. mysql***
-- mysqld -> mysql server
-- 처음 설치하면 mysql server을 실행할 준비가 되어있지 않다. 따라서 초기 세팅이 필요하다. 이때 사용하는 명령어는 [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html). 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
+- 처음 설치하면 mysql server(mysqld)을 실행할 준비가 되어있지 않다. 따라서 초기 세팅이 필요하다. 이때 사용하는 명령어는 [mysql_install_db](https://dev.mysql.com/doc/refman/5.7/en/mysql-install-db.html). 명령을 실행하면 mysql data directory를 초기화 시키고 시스템 테이블을 만든다.
 - 여기서 root는 시스템 user다. 다른 user를 직접 만들고 해도 되는데 그때는 비밀번호 입력이 필요하다. 따라서 간편한 root를 쓰자
 - mysql 서버를 만들었으니깐 이제 데이터를 넣어야 한다.
 - 데이터를 넣기 위해서는 먼저 데이터의 테이블(?)을 생성해줘야 한다. 테이블을 wordpress로 만들어 주자.
@@ -269,36 +251,23 @@ spec:
 - 여기서 중요한게 db 생성 앞 뒤로 **flush privileges**를 해줘야 한다. 이 명령은 mysql server에게 지금 만든 테이블을 reload하라고 알려주는 역할을 한다. 왜인지는 모르겠지만 앞 뒤 모두 해줘야 정상적으로 작동한다.
 - 마지막으로 mysqld --user=root 명령으로 서버를 시작하자.
 - 그 다음으로 서비스.yaml으로 서비스 객체를 만들자.
-   ```
-   mkdir -p /run/mysqld
-   mysqld_install_db --user=root // mysql server 초기 세팅
-   mysqld --user=root --bootstrap < init_mysql // bootstrap 옵션을 사용하면 서버를 실행하지 않은 상태로 DB 테이블을 만들 수 있다. 따라서 db 를 넣어줄 때 이 옵션을 넣어주자. 솔직히 잘 모른다.
-   mysqld --user=root // 서버 실행 
-   ```
-- init_mysql
-   ```
-   FLUSH PRIVILEGES; // 테이블을 reload 하라는 명령. 앞 뒤 모두 해줘야지 정상적으로 작동한다.
-   CREATE DATABASE wordpress;
-   GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' IDENTIFIED BY 'tkdgur123' WITH GRANT OPTION;
-   FLUSH PRIVILEGES;
-   ```
 
 ***2. phpmyadmin***
 - 앞에서 mysql을 이용해서 데이터베이스를 생성했다.  
 - 흠.. 근데 난 mysql 명령어 써서 DB 확인하고 생성하고.. 백업하고 이 모든 과정이 너무 복잡해. 못해먹겠다---> 그래서 있는게 phpmyadmin
 - phpmyadmin을 사용하면 mysql을 손쉽게 조작하고 볼 수 있다.
 - 아래는 세팅과정
-- phpmyadmin 설치에 필요한 여러가지들을 다운 받아 주자.(Dockerfile 참고)
+- phpmyadmin 설치에 필요한 여러가지들을 다운 받아 주자.
 - 그리고 먼저 만들어 놓은 config.inc.php도 /etc/phpmyadmin/에 넣어준다.
 - config.inc.php은 접속할 mysql server의 정보를 입력해주면 됨.
 - /\* Server parameter \*/ 이 부분만 손보면 된다. 이 부분은 이름 그대로 phpmyadmin이 관리할 mysql server다. port, user, password, 등을 앞서 설정해준 그대로 세팅해주면 된다.
 - 그런데 host 부분이 조금 이상한데? 보통 이 부분에는 127.0.0.1, localhost, 또는 특정 ip 주소가 들어가야 할 텐데 여기서는 왜 mysql을 적어준거지?
-- 이 부분은 쿠버네티스로 ip를 관리하는 법과 연관이 된다. ***쿠커네티스 네트워크에서는 특정 service에 IP 주소가 아닌 서비스의 이름으로 접근할 수 있다!!!*** 따라서 mysql 서비스의 주소가 아닌 서비스 이름인 mysql을 적어준 것. 물론 이 방법은 외부에서는 불가능하고 쿠버네티스 안의 객체들끼리의 통신방법. 외부에서는 
-- 여기서 configMap이라는 새로운 기능을 알아보자. 이 기능은 설정파일 등을 Dockerfile에서 건네주는게 아닌 yaml 파일로 건네줄 수 있게 만들어 주는 기능이다. 이건 올려놓은 yaml파일을 보고 하면 된다.
+- 이 부분은 쿠버네티스로 ip를 관리하는 법과 연관이 된다. ***쿠커네티스 네트워크에서는 특정 service에 IP 주소가 아닌 서비스의 이름으로 접근할 수 있다!!!*** 따라서 mysql 서비스의 주소가 아닌 서비스 이름인 mysql을 적어준 것. 물론 이 방법은 외부에서는 불가능하고 쿠버네티스 안의 객체들끼리의 통신방법. 
+- 여기서 configMap이라는 새로운 기능을 사용해보자. 이 기능은 설정파일 등을 Dockerfile에서 건네주는게 아닌 yaml 파일로 건네줄 수 있게 만들어 주는 기능이다. 이건 올려놓은 yaml파일을 보고 하면 된다.
 - 이제 php -S 0.0.0.0:5000 -t /etc/phpmyadmin/ 명령으로 phpmyadmin 를 시작하고 서비스 객체를 만들자.
 - phpmyadmin의 경우 mysql과 다르게 외부에서 접근할 수 있어야 하므로 type을 LoadBalancer로 한다.
-- 대쉬보드에 phpmyadmin의 endpoint로 접속하자.
-- id: admin, password: tkdgur123
+- 대쉬보드에서 phpmyadmin의 endpoint로 접속하자.
+   - id: admin, password: tkdgur123
 - 왼쪽에 보면 wordpress라고 있다. 하지만 아직은 비어져있다.
 - wordpress에서 세팅을 하면 이 부분이 채워진다.
 
@@ -308,13 +277,13 @@ spec:
 - 그리고 여기서도 php 관련 파일들을 다운 받아야한다. php 서버에 신호를 계속 보내야 하기 때문.
 - 필요한 파일들을 설치해줬으면 바로 php -S 0.0.0.0:5050 -t /etc/phpmyadmin 을 해주자
 - 그리고 wordpress-service.yaml을 이용해서 서비스 객체를 만들어주자.
-- 대쉬보드에 접속해서 wordpress의 endpoint에 접속하자. 접속하면 처음 하는 부분이 나온다. 이 부분은 admin을 만드는 부분이므로 나중에 헷갈리지 않게 id : admin, password : 마음대로 로 만들어주자.
+- 대쉬보드에 접속해서 wordpress의 endpoint에 접속하자. 아직 워드프레스 데이터를 넣어주지 않은 상태이므로 초기 세팅 과정이 나온다. admin을 만들자.
 - 이렇게 admin을 생성했으면 pdf에 따라 여러 user를 만들어주자
 - 여기까지 했으면 이제 post를 올리거나 코멘트를 달아보자.
 - ***마지막으로 지금까지 wordpress 조작한 내용들을 export 하자!***
-- 이 부분은 먼저 실행해 놓은 phpmyadmin에서 하면 된다.
-- phpmyadmin의 endpoint에 접속하자. 아이디 비번은 mysql server 만들때 사용했던 걸 이용하면 된다.
-- 접속하면 왼쪽에 wordpress를 누루자. 아까전에는 볼 수 없었던 데이터가 생성된 걸 확인할 수 있다. 그리고 위를 보면 ***EXPORT*** 부분이 있다. 이 버튼을 눌러서 지금까지 저장한 내용을 추출하자.
+   - 이 부분은 먼저 실행해 놓은 phpmyadmin에서 하면 된다.
+   - phpmyadmin의 endpoint에 접속하자. 아이디 비번은 mysql server 만들때 사용했던 걸 이용하면 된다.
+   - 접속하면 왼쪽에 wordpress를 누루자. 아까전에는 볼 수 없었던 데이터가 생성된 걸 확인할 수 있다. 그리고 위를 보면 ***EXPORT*** 부분이 있다. 이 버튼을 눌러서 지금까지 저장한 내용을 추출하자.
 
 - 지금까지 mysql, phpmyadmin, wordpress 등을 세팅하는 법을 알아봤다. 이제 이 내용들을 Dockerfile에 저장하고 자동화 시키는 작업을 하면 된다.
 
